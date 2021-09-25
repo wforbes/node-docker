@@ -20,3 +20,14 @@
 	- `docker ps`
 - Log in to the docker container and see files in it:
 	- `docker exec -it node-app bash`
+	- `exit` to exit bash
+- Run image with volume flag to bind mount a volume. This updates changes to code with the /app dir in container
+	- On powershell: `docker run -v ${pwd}:/app -p 3000:3000 --name node-app node-app-image`
+	- On cmd: `docker run -v %cd%:/app -p 3000:3000 --name node-app node-app-image`
+	- On unix: `docker run -v $(pwd):/app -p 3000:3000 --name node-app node-app-image`
+	- Install nodemon to restart node.js in container upon dev changes `npm install nodemon --save-dev`
+	- Can delete node_modules locally and keep bind mount from deleting node_modules in container by creating an anonymous volume with another -v flag `-v /app/node_modules` in run command
+	- Add `:ro` to the end of the bind mount volume to specify 'read-only' so that file changes on the container aren't pushed to our dev code files, and files can't be changed on container.
+	- New form (on powershell): `docker run -v ${pwd}:/app:ro -v /app/node_modules -p 3000:3000 --name node-app node-app-image`
+
+**Pausing work at video ts 55:10**
