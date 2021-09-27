@@ -51,3 +51,12 @@
 
 <span style="font-size:0.7em">(video timestamp 1:01:32)</span>
 
+#### Removing anonymous volumes
+- Running and removing containers preserves anonymous volumes (like the ones set with `-v /app/node_modules`), which build up over time
+	- See these volumes with `docker volume ls`
+	- Manually remove these volumes with `docker volume prune`. Remove individual volumes with `docker volume rm <volume name>`
+	- **NOTE:** Sometimes removing volumes may not be desired, in the case of wanting to preserve SQL databases
+	- Delete volumes when removing docker container by adding `v` flag: `docker rm node-app -fv`
+
+<span style="font-size:0.7em">(video timestamp 1:04:02)</span>
+
