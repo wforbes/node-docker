@@ -5,11 +5,19 @@
 
  Using the full video found here: [https://www.youtube.com/watch?v=9zUHg7xjIqQ](https://www.youtube.com/watch?v=9zUHg7xjIqQ)
 
+## General setup
+- Docker Desktop install on Windows instructions: [docs.docker.com/desktop/windows/install](https://docs.docker.com/desktop/windows/install/)
+- Docker requires virtualization ([Troubleshooting Docker on Windows for Virtualization](https://docs.docker.com/desktop/windows/troubleshoot/#virtualization)).
+	- I used WSL 2 on Windows Home, but Hyper-V is used on Windows Pro/Enterprise.
+	- Windows features 'Virtual Machine Platform' and 'Windows Subsystem for Linux' should be enabled
+	- Bios setting to enable virtualization should be set
+
 ## Notes
 ### files mentioned in video (in order)
 - **Dockerfile** specifies the docker build steps for the app
 - **.dockerignore** specifies files that shouldn't be copied into the docker container
 - **.env** specifies environment variables that should be set when the container runs
+- **docker-compose.yml** ([Docker Compose docs will explain](https://docs.docker.com/compose))
 
 ### terminal commands for working with docker
 #### basics
@@ -60,3 +68,34 @@
 
 <span style="font-size:0.7em">(video timestamp 1:04:02)</span>
 
+#### Automate with Docker Compose (basics)
+- The command to run the docker container we've seen so far is long. In practice, we may have multiple containers running at once. Each requires a run command, which will get to be a hassle.
+- Add the file *docker-compose.yml* to project root to set up automating multiple docker containers
+- Docker Compose docs are at [docs.docker.com/compose](https://docs.docker.com/compose/), this video uses version 3
+- yml files are whitespace centric, like Python. Indents create blocks. Pay close attention to your whitespace in yml files.
+- The docker-compose.yml file line-by-line:
+	- Specify the version with `version: #`, here we use `version: 3`
+	- Specify the services with `services:`, each item indented under this will be a container.
+	- Indented once under services, we specify the name of our container with `node-app:`. This name matches previous commands, but it could be anything.
+	- Indented twice under the container name, we set details about this container service.
+		- `build: .`, specifying **.** for the current directory automates the build command.
+		- `ports:` specifies a list of ports to open. Lists are made with another indentation under this line and a hyphen at the beginning of the list item
+			- `- "3000:3000"` will mimmic our previous run commands. Additional ports can be opened with a new line, similar indents, and double quotes around the in:out ports.
+		- `volumes:` specifies a list of volumes, mimicing the volumes flag in our previous run command. This will be one for our root to /app copy, and another to preserve the node_modules folder
+			- `- ./:/app` next line indented again under volumes
+			- `- /app/node_modules` next line indented to match previous
+		- `environment:` sets a list of environment variables to specify literally here in the compose file.
+			- `- PORT=3000` will mimic the --env option in the earlier run commands.
+		- OR `env_file:` can be used to specify the environment variables file to mimic the `--env-file` option set in our previous run command
+			- `- ./.env` indented under env_file:, specifies where our env file is
+			- Ensure that the .env file PORT variable is set to 3000 to match the 3000:3000 set in `ports:`.
+- Running `docker-compose up -d` will "Build, (re)create, start, and attach to containers for a service."
+	- The `-d` flag will run it detached, like before.
+	- This `up` command has multiple options depending on whether the containers are already running or not. By default, if new changes are detected, it will stop/recreate containers and preserve their volumes. (from: [Docker Compose docs for 'up'](https://docs.docker.com/compose/reference/up/))
+- Notice that listing the running container with `docker ps -a` will show a different name now, like `node-docker_node-app_1`. This name must be used instead of `node-app` with commands like `exec` to see inside it.
+- `docker-compose down -v` will stop and remove the running container(s)
+- After making changes to the project, running `docker-compose up -d` again won't rebuild the image. It just looks for an image by name, if it exists it just runs it.
+	- Adding the `--build` option to the command forces it to rebuild the image
+	- Full command: `docker-compose up -d --build`
+
+<span style="font-size:0.7em">(video timestamp 1:20:25)</span>
