@@ -142,3 +142,30 @@
 	- We can test this change by again checking the node_modules folder in the prod container to see nodemon is not present, as well as running `printenv` in the container bash to see the 'NODE_ENV=production' environment variable set properly.
 
 <span style="font-size:0.7em">(video timestamp 1:44:48)</span>
+
+### Working with multiple containers
+#### Using a MongoDB container
+- For the second container in our project, we'll set up a MongoDB container to begin persisting data.
+	- On Docker Hub, searching for mongodb provides information on the official mongoDB container ([hub.docker.com/_/mongo](hub.docker.com/_/mongo))
+	- Here starting a mongo server instance uses the `docker run --name (instance-name) -d mongo:tag` command, where tag is the MongoDB version you want
+- In our 'docker-compose.yml' file, we can add another option under 'services' with a name for the mongo instance. Here, we're using 'mongo' but it can be anything.
+- Instead of customizing the build like we did on the 'node-app' container with the 'build' option, with 'mongo' we can use the 'image' option to copy in the provided image. `image: mongo`
+	- We'd like to use the most up to date image version, so we won't specify the 'tag'
+- In the 'Environment Variables' section of ([hub.docker.com/_/mongo](hub.docker.com/_/mongo)), the two env vars we need to specify are described: **MONGO_INITDB_ROOT_USERNAME** and **MONGO_INITDB_ROOT_PASSWORD**
+	- We add these to the 'environment' option in the 'docker-compose.yml' file under the 'mongo' container details
+	- Give each of them any values you want
+- With this new info added to the 'docker-compose.yml' file, run our up command with the two compose files and the build flag `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build`
+	- You should see the normal 'building node-app' load info in terminal, then you should also see 'Pulling mongo (mongo:)...' along with download messages for our new second container
+	- Once that's complete, running `docker ps` should list two containers, 'node-docker_node-app' and 'mongo'
+- We can now log into this new container and perform actions on the mongo app running in it.
+	- Use the exec command we've seen before `docker exec -it node-docker_mongo_1 bash`
+	- The tutorial says to use the `mongo` command to open the mongo shell, though now I see that's been depreceated so you may need to use `mongosh` instead
+		- This command needs the username and password you set in the 'docker-compose.yml' file, specify them with the -u and -p flags: `mongo -u "username" -p "password"`
+	- Once the mongo shell is open, run the `db` command to see the default database set up by the image. Mine was named 'test'.
+	- We can use the `use` command to create and switch to a new database by passing it the name of a new database. Try `use mydb`
+		- We can run `show dbs` to list the databases, but we won't see our new database here (or the test database) until it has a document/entry saved in it. Right now it's empty
+	- Let's add a document to this database with the insert function: `db.books.insert({"name": "harry potter"})`
+		- We should now see our inserted document with the `db.books.find()` function
+		- We should also see our 'mydb' database in the list of `show dbs`
+	- You can use the `exit` command to leave the mongo shell
+	- Important Note: Instead of running exec to open the container, then the mongo command to open the shell... we can combine these by using exec to go straight to the shell: `docker exec -it node-docker_mongo_1 mongo -u "username" -p "password"`
