@@ -74,7 +74,7 @@
 - Docker Compose docs are at [docs.docker.com/compose](https://docs.docker.com/compose/), this video uses version 3
 - yml files are whitespace centric, like Python. Indents create blocks. Pay close attention to your whitespace in yml files.
 - The docker-compose.yml file line-by-line:
-	- Specify the version with `version: #`, here we use `version: 3`
+	- Specify the version with `version: "#"`, here we use `version: "3"`
 	- Specify the services with `services:`, each item indented under this will be a container.
 	- Indented once under services, we specify the name of our container with `node-app:`. This name matches previous commands, but it could be anything.
 	- Indented twice under the container name, we set details about this container service.
@@ -94,8 +94,12 @@
 	- This `up` command has multiple options depending on whether the containers are already running or not. By default, if new changes are detected, it will stop/recreate containers and preserve their volumes. (from: [Docker Compose docs for 'up'](https://docs.docker.com/compose/reference/up/))
 - Notice that listing the running container with `docker ps -a` will show a different name now, like `node-docker_node-app_1`. This name must be used instead of `node-app` with commands like `exec` to see inside it.
 - `docker-compose down -v` will stop and remove the running container(s)
-- After making changes to the project, running `docker-compose up -d` again won't rebuild the image. It just looks for an image by name, if it exists it just runs it.
+- After making changes to the project, running `docker-compose up -d` again won't rebuild the image. It just looks for an image by name, if it exists it just runs it. 
+	- An example would be changing the port for the app. That'd include changing the Dockerfile ENV PORT line, the ports line in docker-compose.yml file, the .env file, and the port variable in index.js. Using the 'docker-compose up -d' command alone won't rebuild the image to reflect this change.
 	- Adding the `--build` option to the command forces it to rebuild the image
 	- Full command: `docker-compose up -d --build`
 
 <span style="font-size:0.7em">(video timestamp 1:20:25)</span>
+
+#### Setting up to deploy to dev and prod environments
+

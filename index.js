@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 
 app.get('/', (req, res) => {
-	res.send("<h2>Simple API to learn docker with node/express.</h2><p>Bind mount is working, still.</p>")
+	res.send("<h2>Simple API to learn docker with node/express.</h2>")
 })
 
 const port = process.env.PORT || 3000
