@@ -102,4 +102,43 @@
 <span style="font-size:0.7em">(video timestamp 1:20:25)</span>
 
 #### Setting up to deploy to dev and prod environments
+- We can create different Dockerfile and docker-compose files with variations on the commands used. Comes down to personal preference. Here, we will use one Dockerfile and two different docker-compose files.
+- Start by renaming our current docker-compose file to something like `docker-compose.backup.yml`
+- Then, create three variations of this file. `docker-compose.yml`, `docker-compose.dev.yml`, `docker-compose.prod.yml`
+- There's no point in copy/pasting all the shared information between these three files, or any other environment specific docker-compose files we may have. Some projects have many of them. All the need to share are the first three lines: the version, services option, with node-app option in it.
+	- The `docker-compose.yml` should include all the shared configuration between the two environments 'dev' and 'prod'.
+		- This includes the version with the build and ports options (in services, node-app).
+		- Also, the environment option with a variable for `PORT=3000`.
+	- The `docker-compose.dev.yml` should include what's specific for the dev environment
+		- This includes the version, the volumes option, and the environment option with `NODE_ENV=development`
+		- Then, we override the Dockerfile's "CMD" line with the "command:" option in this dev yml file. The value should be `npm run dev`, to trigger our package.json dev script to run nodemon.
+	- At this point, we can set the Dockerfile's CMD array members to be "node", "index.js"
+	- The `docker-compose.prod.yml` only need include the variations of the dev file.
+		- These include the 'environment' option being set to `NODE_ENV=production` and the 'command' option as `node index.js`
+- Now running `docker-compose up` needs a specifically ordered set of file names with the -f flag before them. This combines the options from our multiple files.
+	- To run dev, `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d`
+	- Testing dev can include modifying the index.js file to see changes appear on the page at 'localhost:3000' while the container is running.
+	- To bring it down, use the same set of files in the command with the `down -v` command/flag at the end. `docker-compose -f docker-compose.yml -f docker-compose.dev.yml down -v`
+	- To run prod, use the same commands but specify the `docker-compose.prod.yml` file instead of the dev one.
+	- In prod, there is no bind mount set, so making changes to index.js shouldn't be reflected on the page until the image is rebuilt with the --build option in the terminal command.
+- Notice that if we leave the prod container running, then run terminal command `docker exec -it ((name)) bash` to get into the container, then `ls` to see the files... all these new docker-compose files are there that don't need to be.
+	- adding `docker-compose*` to the .dockerignore file will remedy this
+- More importantly, if we change directories into the node_modules folder and list its contents.. we see **nodemon** is present.
+	- We don't want our development dependencies included in our PROD container!
+		- We can remedy this by embedding a bash statement in the RUN line of our 'Dockerfile':
+		`ARG NODE_ENV`
+		`RUN if [ "$NODE_ENV" = "development" ]; \`
+		`then npm install; \`
+		`else npm install --only=production; \`
+		`fi`
+	- Notice, this uses the ARG keyword to pass in that NODE_ENV value. In order to account for that we need to pass that into the 'build' option in our docker-compose files.
+		- This means giving 'build' two members, context and args. The 'context' value is the same '.' value our old build option had. The 'args' value is a key/value to give NODE_ENV a value of either 'development' or 'production'.
+		`build:`
+		`  context: .`
+		`  args:`
+		`    NODE_ENV: development`
+		or
+		`    NODE_ENV: production`
+	- We can test this change by again checking the node_modules folder in the prod container to see nodemon is not present, as well as running `printenv` in the container bash to see the 'NODE_ENV=production' environment variable set properly.
 
+<span style="font-size:0.7em">(video timestamp 1:44:48)</span>
