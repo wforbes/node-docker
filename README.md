@@ -169,3 +169,40 @@
 		- We should also see our 'mydb' database in the list of `show dbs`
 	- You can use the `exit` command to leave the mongo shell
 	- Important Note: Instead of running exec to open the container, then the mongo command to open the shell... we can combine these by using exec to go straight to the shell: `docker exec -it node-docker_mongo_1 mongo -u "username" -p "password"`
+
+<span style="font-size:0.7em">(video timestamp 1:51:35)</span>
+
+#### Creating a named volume
+- If we run the `docker-compose ... down -v` command to spin down this container, the new database we created will go poof. Try it. Spin down the container, then bring it back up again, exec into the mongo shell and run `show dbs` again.. the 'mydb' database isn't there.
+- To remedy this, we need to specify volumes for this container.
+- We could create an anonymous volume like we've been doing, but this isn't always the most useful thing to do because it's hard to tell which one is which.. their names aren't easily human readable.
+- Instead, we should create a named volume. It's the same as an anonymous volume.. only with a human readable name that can easily be identified when working with it.
+- Inspecting [hub.docker.com/_/mongo](hub.docker.com/_/mongo) in the 'Where to Store Data' section, it describes creating a data directory on the host system and bind-mounting it to a directory in the container `docker run --name something -v /my/own/datadir:/data/db -d mongo`
+	- That -v flag value shows the bind-mount
+- We can specify a named volume for this by adding a `volumes:` option to the service in our 'docker-compose.yml' file, then giving it a value like `- mongo-db:/data/db`.
+	- Here the 'mongo-db' is the name of the volume, followed by a colon, and then the directory of the volume
+- If we run the 'docker-compose ... up' command now, we'll get an error:
+	- `ERROR: Named volume "mongo-db:/data/db:rw" is used in service "mongo" but no declaration was found in the volumes section.`
+	- We need to declare this named volume in our docker-compose file. This is because named volumes can be used by multiple services.
+	- So, to remedy this, we simply just need to add a `volumes:` section at the root (no indents) to the bottom of the 'docker-compose.yml' file after the `services:` section. Add our named volume indented under it with a colon: `mongo-db:`
+- With the named volume added to `mongo:` and the root `volumes:` declaration in place, we can run the `docker-compose ... up` command and it should build as before.
+- Now, we can exec into the mongo shell on the mongo container `docker exec -it node-docker_mongo_1 mongo -u "username" -p "password"` and re-do our work in it
+	- `show dbs` to see the admin, config, and local databases
+	- `use mydb` to create a new database and switch into it
+	- `db.books.insert({ "name": "harry potter" })` to insert an entry
+	- `db.books.find()` to show this entry
+	- `exit` to leave the shell and container
+- New Problem: We're using the -v flag in our `docker-compose ... down -v` command to delete the anonymous volume in the docker-compose file `- /app/node_modules`, but there's a problem now ... it will ALSO delete the named volume we just set up.
+	- **IMPORTANT**: Given this, we can't use the `-v` flag in our `docker-compose ... down` command anymore. We will just have to delete the anonymous volumes manually as they begin to pile up
+	- Run the `docker-compose ... down` command now, without the `-v` flag.
+	- Run `docker volume ls` and you should see any least a couple anonymous volumes listed with a big string of hex values as the VOLUME NAME. These are the anonymous volumes we aren't deleting with `-v` anymore.
+	- We *could* run `docker volume prune` right now to delete these volumes, but the tutorial recommends doing this while the containers are running... i.e. *after* running `docker-compose ... up -d`. This will ensure that only the volumes we **aren't** using will be pruned away and deleted.
+	- So go ahead and run `docker-compose ... up -d`, then run `docker volume prune`. This will remove the containers that aren't being used anymore and we don't need.
+	- Verify this by running `docker volume -ls` to see that there are fewer volumes.
+- Finally, we can verify all this has gone correctly by running exec into mongo again, showing the dbs to see our 'mydb' is still there, switching to it, then running the find function to see our data persisted
+	- `docker exec -it node-docker_mongo_1 mongo -u "username" -p "password"` to get in
+	- `show dbs` to list databases and verify mydb is still there
+	- `use mydb` to switch to it
+	- `db.books.find()` to see our persisted data
+
+<span style="font-size:0.7em">(video timestamp 2:01:48)</span>
