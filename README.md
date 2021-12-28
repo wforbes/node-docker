@@ -206,3 +206,28 @@
 	- `db.books.find()` to see our persisted data
 
 <span style="font-size:0.7em">(video timestamp 2:01:48)</span>
+
+#### Communicating between containers
+- To communicate with the mongodb container, our app can use 'mongoose' so lets install it
+	- [https://www.npmjs.com/package/mongoose](https://www.npmjs.com/package/mongoose)
+	- Install mongoose to the project with `npm install mongoose`
+	- Then bring down the containers (without -v)
+	- And bring them up again with the `docker-compose ... up -d --build` command
+- The Mongoose documentation for [connections](https://mongoosejs.com/docs/connections.html) shows connecting to the database with  the `mongoose.connect('mongodb://username:password@host:port/database?options...')` function
+	- This function needs your ip in the host portion.
+	- To find this, first do a `docker ps` command to see the names of your containers.
+	- Then do a 'docker inspect' command with the name of the container: `docker inspect node-docker_mongo_1`
+	- In all this information, the "NetworkSettings" > "Networks" > "node-docker_default" > "IPAddress" has the container ip
+	- Mine was 172.22.0.2
+	- Then it needs the port, the default for mongo is 27017
+- In index.js we add the mongoose.connect function with a .then() and .catch() chain because it returns a promise.
+	- In the .then() callback, output that db connection was successful
+	- You can test this by using `docker logs node-docker_node-app_1` (substitute your node app's name). This should result in the console output appearing near the end of the log output.
+- Problem: There's no guarantee that the IP address will always be the same. We shouldn't actually use the IP here.
+	- Solution: You can reference the docker container by "services:" name from the docker-compose file. In this case the name we can use is `mongo`, since that's what our mongo container's service name is. That is what we should use instead of the ip address. Keep the port.
+	- Using the `docker logs node-docker_node-app_1 -f` command (with the -f for follow), we can test this change live to see the logs display a connection and our successful db connection console
+- By using exec to drop into the bash of the node-app container, we are able to `ping mongo` and confirm that the node-app container is able to talk to our mongo container. 
+	- CTRL+C to stop the ping
+	- `exit` to leave the node-app container bash.
+
+<span style="font-size:0.7em">(video timestamp 2:12:00)</span>
