@@ -231,3 +231,14 @@
 	- `exit` to leave the node-app container bash.
 
 <span style="font-size:0.7em">(video timestamp 2:12:00)</span>
+
+#### Express Config file
+- You shouldn't hardcode your mongo URL in the application. It's better to create a config file to keep this in instead.
+	- Create a config folder in the root directory and add a 'config.js' file there.
+	- In the 'config.js' file add a module.exports object
+	- In the module.exports object, add the username, password, service name, port fields as 'MONGO_...' with each getting a value of process.env.(field name). The service name and port can default to 'mongo' and 27017 with a logical OR.
+	- The username and password can be added to the dev docker-compose 'environment' section under node-app as `- MONGO_USER=(username)` and `-MONGO_PASSWORD=(password)`
+	- We'll need to bring down the containers and rebuild them after updating the environment vars
+- We can also copy over the mongo section from docker-compose.yml to docker-compose.dev.yml and remove the 'image' section because it's shared between environments
+
+<span style="font-size:0.7em">(video timestamp 2:21:45)</span>

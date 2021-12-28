@@ -1,9 +1,11 @@
 const express = require('express')
 const mongoose = require('mongoose')
+const {MONGO_USER, MONGO_PASSWORD, MONGO_IP, MONGO_PORT } = require("./config/config");
 
 const app = express()
 
-mongoose.connect("mongodb://wforbes:thepassword@mongo:27017/mydb?authSource=admin")
+const mongoURL = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/mydb?authSource=admin`;
+mongoose.connect(mongoURL)
 	.then(() => console.log("successfully connected to DB!")).catch((e) => console.log(e));
 
 
