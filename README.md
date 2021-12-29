@@ -242,3 +242,12 @@
 - We can also copy over the mongo section from docker-compose.yml to docker-compose.dev.yml and remove the 'image' section because it's shared between environments
 
 <span style="font-size:0.7em">(video timestamp 2:21:45)</span>
+
+#### Container bootup order
+- We can't know what order the containers will start up with and this can cause problems because the node-app container needs to connect to the mongo container when it starts.
+	- To make sure they start up in the proper order, add the `depends_on:` option to the node-app service section in the docker_compose.yml file, and pass the name of the mongo service `- mongo` in to it.
+	- Even with this implemented, we can't know if mongo will be available and up when the node-app container tries to connect to it. Mongoose retries for 30 seconds automatically, but it's possible that for this or other containers we'll need to create some application logic to handle scenarios like this.
+	- The tutorial has us create a recursive function that tries to connect every. The creator isn't sure if it's the best way to do it, but he assures us we should be able to handle the database being down on our own without depending on mongoose alone.
+- You can start up the node-app container without it's dependencies with the '--no-deps' flag on `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --no-deps node-app`. This way we can test the failure state where mongo database isn't running when node-app tries to connect to it.
+
+<span style="font-size:0.7em">(video timestamp 2:32:26)</span>
