@@ -275,3 +275,19 @@
 - In the video, these changes are tested using Postman (https://www.postman.com/downloads/)[https://www.postman.com/downloads/]
 
 <span style="font-size:0.7em">(video timestamp 2:51:27)</span>
+
+#### Sign up and Login
+- Create a model, controller and routes file for 'users' like we did with 'posts'
+	- Model only contains username and password
+	- Controller only has a signup() function that uses mongoose.create() to create a new user and return it
+	- Route only has a "/signup" route on POST
+- Add an app.use call for the userRoutes file
+- Notice that we don't want to store the password in plain text, we should hash it
+	- Take down the containers, run `npm install bcryptjs`, bring the containers back up with --build
+	- import bcryptjs in the user controller, use the .hash() function to hash the password before running User.create()
+- Add basic login feature
+	- Add login method in user controller, look up the user by username, use bcrypt.compare() to test the given password, return 200 success if it was correct
+	- Add "/login" route to user route file
+- Test new routes and methods with Postman. Easy peazy.
+
+<span style="font-size:0.7em">(video timestamp 3:06:57)</span>

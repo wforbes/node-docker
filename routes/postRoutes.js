@@ -1,14 +1,14 @@
-const express = require("express")
+const express = require("express");
 
-const postController = require("../controllers/postController")
+const postController = require("../controllers/postController");
 
-const router = express.Router()
+const router = express.Router();
 
 //localhost:3000/
 router
 	.route("/")
 	.get(postController.getAllPosts)
-	.post(postController.createPost)
+	.post(postController.createPost);
 
 router
 	.route("/:id")
