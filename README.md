@@ -251,3 +251,27 @@
 - You can start up the node-app container without it's dependencies with the '--no-deps' flag on `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --no-deps node-app`. This way we can test the failure state where mongo database isn't running when node-app tries to connect to it.
 
 <span style="font-size:0.7em">(video timestamp 2:32:26)</span>
+
+#### Building a CRUD application
+- Aim to be simple, as this tutorial focuses on docker (not node/express) so these points are sparse of details
+- Create a models, controllers and routes directory at root
+- Create a postModel.js file in the models directory
+	- Define the mongoose schema in this model file
+- Create a postController.js file in the controllers directory
+	- Import the postModel file here and define the endpoint functions for posts using the mongoose functions made available on the Post model:
+		- getAllPosts : find()
+		- getOnePost : findById() 
+		- createPost : create()
+		- updatePost : findByIdAndUpdate()
+		- deletePost : findByIdAndDelete()
+- Create a postRoutes.js file in the routes directory
+	- Import express, postController, and get the express Router
+	- On the router, define the "/" and "/:id" routes
+	- The root route gets the getAll and create functions from the controller
+	- The id route gets the getOne, update, and delete functions from the controller
+- In the index.js file, we just need to import the postRoutes.js file and then below the root 'get' declaration, set the express 'app' object to use the postRouter at our designated route
+	- `app.use("/api/v1/posts", postRouter);
+- We also need to pass in the express.json() middleware to the app object before our route declarations
+- In the video, these changes are tested using Postman (https://www.postman.com/downloads/)[https://www.postman.com/downloads/]
+
+<span style="font-size:0.7em">(video timestamp 2:51:27)</span>
