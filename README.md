@@ -272,7 +272,7 @@
 - In the index.js file, we just need to import the postRoutes.js file and then below the root 'get' declaration, set the express 'app' object to use the postRouter at our designated route
 	- `app.use("/api/v1/posts", postRouter);
 - We also need to pass in the express.json() middleware to the app object before our route declarations
-- In the video, these changes are tested using Postman (https://www.postman.com/downloads/)[https://www.postman.com/downloads/]
+- In the video, these changes are tested using Postman [https://www.postman.com/downloads/](https://www.postman.com/downloads/)
 
 <span style="font-size:0.7em">(video timestamp 2:51:27)</span>
 
@@ -291,3 +291,53 @@
 - Test new routes and methods with Postman. Easy peazy.
 
 <span style="font-size:0.7em">(video timestamp 3:06:57)</span>
+
+#### Authentication with sessions & Redis
+- We could use JWT or sessions, but for this tutorial we'll use sessions in order to demonstrate adding a Redis container to store the session
+- Redis can be found on docker hub at [https://hub.docker.com/_/redis](https://hub.docker.com/_/redis)
+	- Add a 'redis:' service in docker-compose, pass in the 'image:' option there with a value of 'redis'
+	- Run the 'docker-compose... up -d' to pull redis and start the containers
+- The connect-redis package provides the necessary npm install command: `npm install redis connect-redis express-session` per [https://www.npmjs.com/package/connect-redis](https://www.npmjs.com/package/connect-redis)
+	- After running that npm install command, run the 'docker-compose ... up -d --build' to rebuild and account for the new redis dependencies
+		- Running the up command while the containers are running without running the 'down' command first should use the `-V` flag as well. This renews the anonymous volumes for the containers.
+- Once the new npm redis packages are installed and we've rebuilt the containers, we can follow the 'connect-redis' npm documentation
+	- Import the 'redis' and 'express-session' packages in index.js
+	- Import the 'connect-redis' and pass it the session
+	- Create the redis client with .createclient() from the 'redis' object
+		- The .createClient() function needs the redis url (ip in this case)
+		- Set the REDIS_URL environment variable the same way we did with the MONGO_IP variable in config.js
+		- The .createClient() function also needs the port, this can be done the same way that the MONGO_PORT was done. Redis default port is 6379.
+	- Ensure the new config variables are imported from config.js
+- Create a new middleware 'app.use()' call and pass it the express-session object
+	- Pass the express session an object that defines the store (new RedisStore with client property using the redis client from .createClient()) and a 'secret' property which can be set in the config.js
+	- Give the session() middlewire call a 'resave' and 'saveUninitialized' property, both set false
+	- Give the session() middleware a 'cookie' property with the given values shown in index.js, change these later for our own uses. [https://github.com/expressjs/session](https://github.com/expressjs/session)
+	- Add a session secret environment variable to the node-app section of 'docker-compose.dev.yml'
+- Test the "/login" POST route in Postman, see that you're receiving a cookie back
+- You can `docker exec -it node-docker_redis_1 redis-cli` into the running redis container, then run a `KEYS *` to see the active session keys, then run `GET "sess:....` with the session id to see the information of the cookie from redis perspective.
+====
+Quick Aside: Here I ran into a couple issues. This is what they were and how I solved them.
+- We came to the part of the video where we test the "/login" POST route and I wasn't getting a cookie back. The redis container cli didn't show any cookies being created. 
+	- First, in the video he sets 'resave' and 'saveUninitialized' properties on the cookie, but this is not correct in the current version of the middleware
+		- The 'resave' and 'saveUninitialized' properties must be set on the object passed to session(), not in the cookie.
+		- The express-session package changed so that leaving these properties out to default to true is now depreciated.
+	- Next, setting the 'saveUnitialized' to false without modifying the session data elsewhere in the app caused the cookie still not to be retrieved.
+		- I tried setting 'saveUninitialized' to true, but then the node app would crash when I hit the '/login' endpoint.
+		- I realized the crash was caused by 'connect-redis' not being compatiable with Redis version 4, which is what is installed by default now.
+		- I ran `npm uninstall redis` and then `npm install redis@3` as the connect-redis github readme instructs ( [https://github.com/tj/connect-redis](https://github.com/tj/connect-redis) )
+	- Then, I could get a Cookie back from the POST "/login" requests from Postman, and I could see a Cookie saved in the redis-cli.... but I could see was that I was getting a Cookie for any request. This isn't desirable. We don't want a session created any time anyone requests anything from the api.
+		- To solve this I read about what 'saveUninitialized' does in the express-session github readme [https://github.com/expressjs/session](https://github.com/expressjs/session)
+		- I see that if we leave "saveUninitialized" as false, but modify the session data on successful "/login" requests to initialize it, we'll get the cookie on logins as we expect - but we don't get one on other requests
+	- It turns out that this is actually what we will do in the next steps anyway.
+====
+- Now we add the mongodb user object to `req.session` after the password is confirmed correct in the authController.js 'login' function.
+- We should do the same for the signup function, add the user object to the `req.session` upon successful signup.
+- We can extend the maxAge of the session cookie now. I used '60000 * x' where x is the number of minutes the session should be active.
+- Next we can add logic to the postRoutes.js file to restrict operations depending on if the user is logged in with a session or not.
+	- Create a new directory called `middleware` at the root of the project and add a file `authMiddleware,js` to it.
+	- In this file, define a function that gets the user object from the `req.session`, then checks to see if it exists. If not, then respond with a 401 "fail" response. If so, run the `next()` function. (see the authMiddleware.js file in the project here)
+	- Import our new file into postRoutes.js and add it as the first argument in the get(), post(), patch(), and delete() calls
+- We can test this by lowering the maxAge value to 1 min or 30 seconds.. then logging into the API with Postman and trying to create a Post on our app. Then wait for the session to expire (can confirm with redis-cli from docker exec), and trying to create another Post. We shouldn't be able to create a Post or perform the other API operations from Postman with an expired session (or before logging in).
+
+<span style="font-size:0.7em">(video timestamp 3:34:36)</span>
+	

@@ -1,16 +1,29 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const session = require("express-session");
+const redis = require("redis");
+let RedisStore = require("connect-redis")(session);
+
+const app = express();
+
 const { 
 	MONGO_USER,
 	MONGO_PASSWORD,
 	MONGO_IP,
-	MONGO_PORT 
+	REDIS_URL,
+	REDIS_PORT,
+	SESSION_SECRET,
+	MONGO_PORT
 } = require("./config/config");
+
+let redisClient = redis.createClient({
+	host: REDIS_URL,
+	port: REDIS_PORT
+});
+
 
 const postRouter = require("./routes/postRoutes");
 const userRouter = require("./routes/userRoutes");
-
-const app = express();
 
 const mongoURL = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/mydb?authSource=admin`;
 const connectWithRetry = () => {
@@ -24,6 +37,18 @@ const connectWithRetry = () => {
 connectWithRetry();
 
 app.use(express.json());
+
+app.use(session({
+	store: new RedisStore({ client: redisClient }),
+	secret: SESSION_SECRET,
+	resave: false,
+	saveUninitialized: false,
+	cookie: { // TODO: change these later
+		secure: false,	
+		httpOnly: true, //means that javascript on browser can't access
+		maxAge: 60000 * 30 // 30 mins
+	}
+}))
 
 app.get("/", (req, res) => {
 	res.send("<h2>Simple API to learn docker with node/express.</h2>")
