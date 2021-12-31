@@ -11,7 +11,7 @@
 - Nginx: [https://hub.docker.com/_/nginx](https://hub.docker.com/_/nginx)
 
 ## Node dependencies used
-- mongoose: [https://www.npmjs.com/package/mongoose](https://www.npmjs.com/package/mongoose)
+- mongoose: [https://mongoosejs.com/](https://mongoosejs.com/) // [https://www.npmjs.com/package/mongoose](https://www.npmjs.com/package/mongoose) 
 	- Makes working with MongoDB easier
 - bcryptjs: [https://www.npmjs.com/package/bcryptjs](https://www.npmjs.com/package/bcryptjs)
 	- Used to hash user passwords so they aren't stored in the database as plain text
@@ -405,5 +405,51 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 
 - We will be deploying the app the WRONG WAY, then steadily correcting things to illustrate why we're configuring it the way we are. It may be frustrating to follow point-to-point, but I agree with the presenter that this will show first-hand experience how things should be done with the reasoning included.
 
-#### Installing docker on Ubuntu (with Digital Ocean)
+- These notes will be ALOT more sparse here. If you have any questions email me wforbes87@gmail.com!
 
+#### Installing docker on Ubuntu (with Digital Ocean)
+- Set up digital ocean account
+- Create Ubuntu droplet, minimum specs ($5 per month)
+- Open powershell and run `ssh root@000.00.00.000` ... replace the zeros for your droplet's ip address, enter the droplet password when prompted
+- Next, we'll install **docker** and **docker-compose**
+- Full docker install guide is at [https://docs.docker.com/engine/install/ubuntu/](https://docs.docker.com/engine/install/ubuntu/), but the easiest way to install is by following the comments in this file [https://get.docker.com/](https://get.docker.com/)
+	- You'll run `curl -fsSL https://get.docker.com -o get-docker.sh`
+	- Then run `sh get-docker.sh`
+- The docker-compose installation guide is here [https://docs.docker.com/compose/install/](https://docs.docker.com/compose/install/)
+	- First, run `sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
+	- Then, when that's complete, run `sudo chmod +x /usr/local/bin/docker-compose`
+- We can test installation worked by running `docker -v` and `docker-compose -v`
+
+<span style="font-size:0.7em">(video timestamp [4:03:21](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=14601s))</span>
+
+#### Setup Git
+- Create a Github repo for the project (like this one)
+- Create a .gitignore file at the root of your project with `node_modules/` in it
+- Run `git init`
+- Run `git add --all`
+- Run `git commit -m "first commit"`
+- Run `git branch -M main`
+- Run `git remote add origin (your github repo url node-docker.git)`
+- Run `git push -u origin main`
+- Now your repo should be set up on github.com
+
+<span style="font-size:0.7em">(video timestamp [4:05:37](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=14737s))</span>
+
+#### Setup Ubuntu environment variables
+- Copy the environment variables from docker-compose.dev into docker-compose.prod for the 'node-app' and 'mongo' services
+- Replace the values with ${ENV_VAR_NAME} where ENV_VAR_NAME is the name of each environment variable name
+- We can set environment variables on the Ubuntu machine one by one with a command like `export SESSION_SECRET="thesecret"`, however this won't persist across reboots on the server
+- Instead, we should create an environment file for this
+	- In the root folder (or somewhere AWAY from our project files), create a `.env` file with a `vi .env` command
+	- This opens vi, a text editor of wizards. Press I to enable insert mode, now copy in the environment variables for mongo user, password, session secret, and the mongo init db user/password.
+	- Press ESC to exit insert mode, then type :wq to save and close the file
+- Now to have ubuntu copy in these environment variables we need to modify the `.profile` file in the root directory
+	- Run `vi .profile` while in the root directory
+	- At the bottom of the file add the following line:
+		- `set -o allexport; source /root/.env; set +o allexport`
+		- substitute '/root/.env' for wherever you put the .env file
+	- This will loop through the contents of that file and set the environment variables on the machine
+- Run `exit` to close out the ssh session
+- SSH back into the server and run `printenv` to verify that the environment variables were set!
+
+<span style="font-size:0.7em">(video timestamp [4:14:12](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=15252s))</span>
