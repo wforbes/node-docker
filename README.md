@@ -54,7 +54,9 @@
 	- `exit` to exit bash
 - Add *.dockerignore* file to specify files not to copy during container build, this reduces files needlessly copied to container
 
+
 <span style="font-size:0.7em">(video timestamp 31:46)</span>
+
 
 #### developing directly in container (code changes in editor directly update code in container)
 - Run image with volume flag to bind mount a volume. This updates changes to code with the /app dir in container
@@ -67,7 +69,9 @@
 - Complete command to bind mount volume, volume to conserve node_modules, and run as readonly (on powershell):
 	- `docker run -v ${pwd}:/app:ro -v /app/node_modules -p 3000:3000 -d --name node-app node-app-image`
 
+
 <span style="font-size:0.7em">(video timestamp 55:10)</span>
+
 
 #### specify and set environment variables
 - *ENV* command in Dockerfile sets a default environment variable that can be used in app. ex: `ENV PORT 3000` sets the PORT env var to 3000
@@ -77,7 +81,9 @@
 - Add the file *.env* to list multiple environment variables and specify it with `--env-file` in the run command
 	- Full command, with env file specified: `docker run -v ${pwd}:/app:ro -v /app/node_modules --env-file ./.env -p 3000:4000 -d --name node-app node-app-image`
 
+
 <span style="font-size:0.7em">(video timestamp 1:01:32)</span>
+
 
 #### Removing anonymous volumes
 - Running and removing containers preserves anonymous volumes (like the ones set with `-v /app/node_modules`), which build up over time
@@ -86,7 +92,9 @@
 	- **NOTE:** Sometimes removing volumes may not be desired, in the case of wanting to preserve SQL databases
 	- Delete volumes when removing docker container by adding `v` flag: `docker rm node-app -fv`
 
+
 <span style="font-size:0.7em">(video timestamp 1:04:02)</span>
+
 
 #### Automate with Docker Compose (basics)
 - The command to run the docker container we've seen so far is long. In practice, we may have multiple containers running at once. Each requires a run command, which will get to be a hassle.
@@ -119,7 +127,9 @@
 	- Adding the `--build` option to the command forces it to rebuild the image
 	- Full command: `docker-compose up -d --build`
 
+
 <span style="font-size:0.7em">(video timestamp 1:20:25)</span>
+
 
 #### Setting up to deploy to dev and prod environments
 - We can create different Dockerfile and docker-compose files with variations on the commands used. Comes down to personal preference. Here, we will use one Dockerfile and two different docker-compose files.
@@ -161,7 +171,9 @@
 		`    NODE_ENV: production`
 	- We can test this change by again checking the node_modules folder in the prod container to see nodemon is not present, as well as running `printenv` in the container bash to see the 'NODE_ENV=production' environment variable set properly.
 
+
 <span style="font-size:0.7em">(video timestamp [1:44:48](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=6287s))</span>
+
 
 ### Working with multiple containers
 #### Using a MongoDB container
@@ -190,7 +202,9 @@
 	- You can use the `exit` command to leave the mongo shell
 	- Important Note: Instead of running exec to open the container, then the mongo command to open the shell... we can combine these by using exec to go straight to the shell: `docker exec -it node-docker_mongo_1 mongo -u "username" -p "password"`
 
+
 <span style="font-size:0.7em">(video timestamp 1:51:35)</span>
+
 
 #### Creating a named volume
 - If we run the `docker-compose ... down -v` command to spin down this container, the new database we created will go poof. Try it. Spin down the container, then bring it back up again, exec into the mongo shell and run `show dbs` again.. the 'mydb' database isn't there.
@@ -225,7 +239,9 @@
 	- `use mydb` to switch to it
 	- `db.books.find()` to see our persisted data
 
+
 <span style="font-size:0.7em">(video timestamp [2:01:48](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=7308s))</span>
+
 
 #### Communicating between containers
 - To communicate with the mongodb container, our app can use 'mongoose' so lets install it
@@ -250,7 +266,9 @@
 	- CTRL+C to stop the ping
 	- `exit` to leave the node-app container bash.
 
+
 <span style="font-size:0.7em">(video timestamp [2:12:00](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=8505s))</span>
+
 
 #### Express Config file
 - You shouldn't hardcode your mongo URL in the application. It's better to create a config file to keep this in instead.
@@ -261,7 +279,9 @@
 	- We'll need to bring down the containers and rebuild them after updating the environment vars
 - We can also copy over the mongo section from docker-compose.yml to docker-compose.dev.yml and remove the 'image' section because it's shared between environments
 
+
 <span style="font-size:0.7em">(video timestamp [2:21:45](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=8505s))</span>
+
 
 #### Container bootup order
 - We can't know what order the containers will start up with and this can cause problems because the node-app container needs to connect to the mongo container when it starts.
@@ -270,7 +290,9 @@
 	- The tutorial has us create a recursive function that tries to connect every. The creator isn't sure if it's the best way to do it, but he assures us we should be able to handle the database being down on our own without depending on mongoose alone.
 - You can start up the node-app container without it's dependencies with the '--no-deps' flag on `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --no-deps node-app`. This way we can test the failure state where mongo database isn't running when node-app tries to connect to it.
 
+
 <span style="font-size:0.7em">(video timestamp [2:32:26](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=9146s))</span>
+
 
 #### Building a CRUD application
 - Aim to be simple, as this tutorial focuses on docker (not node/express) so these points are sparse of details
@@ -294,7 +316,9 @@
 - We also need to pass in the express.json() middleware to the app object before our route declarations
 - In the video, these changes are tested using Postman [https://www.postman.com/downloads/](https://www.postman.com/downloads/)
 
+
 <span style="font-size:0.7em">(video timestamp [2:51:27](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=10287s))</span>
+
 
 #### Sign up and Login
 - Create a model, controller and routes file for 'users' like we did with 'posts'
@@ -310,7 +334,9 @@
 	- Add "/login" route to user route file
 - Test new routes and methods with Postman. Easy peazy.
 
+
 <span style="font-size:0.7em">(video timestamp [3:06:57](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=11217s))</span>
+
 
 #### Authentication with sessions & Redis
 - We could use JWT or sessions, but for this tutorial we'll use sessions in order to demonstrate adding a Redis container to store the session
@@ -359,12 +385,16 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 	- Import our new file into postRoutes.js and add it as the first argument in the get(), post(), patch(), and delete() calls
 - We can test this by lowering the maxAge value to 1 min or 30 seconds.. then logging into the API with Postman and trying to create a Post on our app. Then wait for the session to expire (can confirm with redis-cli from docker exec), and trying to create another Post. We shouldn't be able to create a Post or perform the other API operations from Postman with an expired session (or before logging in).
 
+
 <span style="font-size:0.7em">(video timestamp [3:34:36](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=12876s))</span>
-	
+
+
 #### Architecture Review
 - The presenter just discusses why/how we're going to use Nginx to load balance between multiple node/express containers that all connect to our mongodb container.
 
+
 <span style="font-size:0.7em">(video timestamp [3:40:48](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=13248s))</span>
+
 
 #### Nginx for load balancing to multiple node containers
 - The nginx docker image details are found here: [https://hub.docker.com/_/nginx](https://hub.docker.com/_/nginx)
@@ -392,7 +422,9 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 	- Then open a split terminal in vscode (or run two terminal/powershell windows) and open the `docker logs node-docker_node-app_# -f` command in each. Where '#' is 1 in one terminal and 2 in the other terminal.
 	- Making a GET request to that root URL should cause node-app_1 to give the console message, then a second GET request should cause node-app_2 to give a console message. They'll trade back and forth for each successive GET request!
 
+
 <span style="font-size:0.7em">(video timestamp [3:54:33](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=14073s))</span>
+
 
 #### Express CORS
 - To allow different domains to access the API we need to enable cors (cross-origin resource sharing)
@@ -401,7 +433,9 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 	- Rebuild the image with a docker-compose...up -d --build -V
 	- In the index.js file, import cors and add it to the middleware section with `app.use(cors({}))`, we can leave the cors config object being passed to it empty. Save the file when that's done so that nodemon can restart the server.
 
+
 <span style="font-size:0.7em">(video timestamp [3:57:44](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=14264s))</span>
+
 
 - We will be deploying the app the WRONG WAY, then steadily correcting things to illustrate why we're configuring it the way we are. It may be frustrating to follow point-to-point, but I agree with the presenter that this will show first-hand experience how things should be done with the reasoning included.
 
@@ -420,7 +454,9 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 	- Then, when that's complete, run `sudo chmod +x /usr/local/bin/docker-compose`
 - We can test installation worked by running `docker -v` and `docker-compose -v`
 
+
 <span style="font-size:0.7em">(video timestamp [4:03:21](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=14601s))</span>
+
 
 #### Setup Git
 - Create a Github repo for the project (like this one)
@@ -433,7 +469,9 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 - Run `git push -u origin main`
 - Now your repo should be set up on github.com
 
+
 <span style="font-size:0.7em">(video timestamp [4:05:37](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=14737s))</span>
+
 
 #### Setup Ubuntu environment variables
 - Copy the environment variables from docker-compose.dev into docker-compose.prod for the 'node-app' and 'mongo' services
@@ -452,7 +490,9 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 - Run `exit` to close out the ssh session
 - SSH back into the server and run `printenv` to verify that the environment variables were set!
 
+
 <span style="font-size:0.7em">(video timestamp [4:14:12](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=15252s))</span>
+
 
 #### Deploying app to production server
 - Create a directory called app in the root of the Ubuntu server `mkdir app`
@@ -466,7 +506,9 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 	- Try a POST request to ../api/v1/users/signup with a username and password
 	- Then try logging in, creating a post, and viewing all posts
 
+
 <span style="font-size:0.7em">(video timestamp [4:18:57](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=15537s))</span>
+
 
 #### Pushing changes the hard way
 - Make a minor change to the root GET response in index.js
@@ -483,3 +525,39 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 
 
 <span style="font-size:0.7em">(video timestamp [4:27:32](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=16052s))</span>
+
+
+#### Dev to Prod workflow review
+- Building the docker image on the production image wastes resources. We just shouldn't do it.
+- Instead we should build the image on our development machine, then push it to DockerHub or some other docker repository host, then pull the built image on the production server, and do a 'docker-compose ... up' that detects there's a new image which triggers a rebuild on the production server without the resource hog.
+
+
+<span style="font-size:0.7em">(video timestamp [4:30:50](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=16250s))</span>
+
+
+#### Improved Dockerhub workflow
+- Create an account on Dockerhub [https://hub.docker.com](https://hub.docker.com)
+- Create a new repository there, whatever you name this repository is what we will have to change our image name to match in the next step
+- Now that we've created an image on Dockerhub, we'll have to run `docker image tag (old name) (new name)`
+	- You can use `docker image ls` to see the 'latest' image and get the old name from the 'REPOSITORY' column there.
+	- As an example, my command here was `docker image tag node-docker_node-app wforbes87/node-app`
+- Next you'll have to login to dockerhub, run `docker login` and follow the prompts to enter your username and password
+- Then, push our image to the new repository with `docker push (new name)`
+	- You'll be able to see the image on your dockerhub page for your repository
+- Finally, we need to update the docker-compose file to pull this image from dockerhub.
+	- Add an "image:" option under the "node-app:" service in docker-compose.yml, give it a value of the name of your repository on dockerhub.. for example mine is 'wforbes87/node-app'
+- Now we can run `docker-compose -f docker-compose.yml -f docker-compose.prod.yml build` using the 'build' command, instead of 'up'
+- Next we can run `docker-compose -f docker-compose.yml -f docker-compose.prod.yml push node-app` using the 'push' command and specifying the service name, to push it to dockerhub. Without the service name, it will push the new build for all the images
+- On the production machine, we just need to run `docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull`, with the 'pull' command to pull in the new service image from dockerhub
+- Then, on the prod machine, run `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d` to bring that new service image up
+
+- To recap the workflow:
+	- Dev machine: Make changes to the node project
+	- Dev machine: Run `docker-compose -f docker-compose.yml -f docker-compose.prod.yml build node-app`
+	- Dev machine: Run `docker-compose -f docker-compose.yml -f docker-compose.prod.yml push node-app`
+	- Prod machine: Run `docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull node-app`
+	- Prod machine: Run `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d`
+	- Changes are finalized on production
+
+
+<span style="font-size:0.7em">(video timestamp [4:46:10](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=17170s))</span>
