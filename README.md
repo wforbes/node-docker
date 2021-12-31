@@ -562,6 +562,7 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 
 <span style="font-size:0.7em">(video timestamp [4:46:10](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=17170s))</span>
 
+
 #### Automating with watchtower
 - The last couple steps in our workflow, the 'pull' and 'up' command on the production side, can be automated.
 	- Not everyone likes the idea of automating the production pull because it can result in outages if the code wasn't perfect, so many people prefer to keep this as a manual step.
@@ -578,5 +579,16 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 - When you're done checking it out you can remove watchtower from production with `docker rm watchtower -f`
 - The watchtower documentation shows how to set it up in your docker-compose file if this is something you'd like to keep doing. Personally, I won't.
 
+
 <span style="font-size:0.7em">(video timestamp [4:56:06](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=17766s))</span>
 
+
+#### Why we need an orchestrator
+- When we run the 'docker-compose ... up' command on production, we're essentially tearing down the old container and setting up a new one. During that time, our app will experience an outage. If someone hits the API during that small window of time, they won't be able to get a response.
+- There are hacks we could do implement rolling updates to eliminate this window of outage, but they aren't recommended for production.
+- Instead, we need an orchestrator.
+	- One of the most popular container orchestrators is called "Kubernetes", but that won't take an incredibly long amount of time to get up and going.
+	- Instead, we'll use "Docker Swarm" because it's fast and easy to get started with.
+
+
+<span style="font-size:0.7em">(video timestamp [5:03:32](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=17766s))</span>
