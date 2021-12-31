@@ -36,6 +36,8 @@ const connectWithRetry = () => {
 };
 connectWithRetry();
 
+app.enable("trust proxy");
+
 app.use(express.json());
 
 app.use(session({
@@ -50,8 +52,9 @@ app.use(session({
 	}
 }))
 
-app.get("/", (req, res) => {
-	res.send("<h2>Simple API to learn docker with node/express.</h2>")
+app.get("/api/v1", (req, res) => {
+	res.send("<h2>Simple API to learn docker with node/express.</h2>");
+	console.log("root GET request responded to");
 });
 
 app.use("/api/v1/posts", postRouter);

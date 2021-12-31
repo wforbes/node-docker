@@ -341,3 +341,35 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 
 <span style="font-size:0.7em">(video timestamp 3:34:36)</span>
 	
+#### Architecture Review
+- The presenter just discusses why/how we're going to use Nginx to load balance between multiple node/express containers that all connect to our mongodb container.
+
+<span style="font-size:0.7em">(video timestamp 3:40:48)</span>
+
+#### Nginx for load balancing to multiple node containers
+- The nginx docker image details are found here: [https://hub.docker.com/_/nginx](https://hub.docker.com/_/nginx)
+- We need to set up nginx specific configs
+	- Create a new directory `nginx` at the root of the project
+	- Create a new file `default.conf` in the new folder
+	- In this conf file, we'll add all the proxy settings that nginx needs. For now, just see the nginx/default.conf file. (note to self.. read about these)
+- Add 'nginx:' as a service in the docker-compose file above the 'node-app:' service
+	- The image being used for nginx here is `image: nginx:stable-alpine`
+	- We can remove the ports section of the node-app service in the docker-compose file now.
+	- In the development docker-compose file, we include the nginx service and specify the ports option here as `- "3000:80"`
+	- In the production docker-compose file, we include the nginx service and specify the ports option to be `- "80:80"`
+- The nginx service in docker-compose needs to know where it's conf file is, this is added with the volumes option.
+	- It expects the config file to be in '/etc/nginx/conf.d/default.conf'. Our volumes option will sync that with our './nginx/default.conf'.
+	- So the nginx volumes option should be set as:
+		 `- ./nginx/default.conf/:/etc/nginx/conf.d/default.conf:ro`
+		 (We set nginx image side to be read only (ro) for some added security
+- As an optional configuration on express, in a production environment we'll want to set express to trust the nginx proxy.
+	- This is useful if you'd like access to the user's IP address in the node application, like for rate limiting.
+	- All you need to do is add `app.enable("trust proxy");` to the index.js file of the node app just before the middleware section (the app.use() statements).
+- To add a second node instance, we just run the docker-compose command with `--scale node-app=2` at the end of it
+	- The complete docker-compose up command will now be something like: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --scale node-app=2`
+- Now we can test that two node-app instances are running by:
+	- Add a `console.log("test!")` in the root GET response in index.js. Save the file.
+	- Then open a split terminal in vscode (or run two terminal/powershell windows) and open the `docker logs node-docker_node-app_# -f` command in each. Where '#' is 1 in one terminal and 2 in the other terminal.
+	- Making a GET request to that root URL should cause node-app_1 to give the console message, then a second GET request should cause node-app_2 to give a console message. They'll trade back and forth for each successive GET request!
+
+<span style="font-size:0.7em">(video timestamp 3:54:48)</span>
