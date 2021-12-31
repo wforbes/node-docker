@@ -54,7 +54,7 @@ app.use(session({
 }))
 
 app.get("/api/v1", (req, res) => {
-	res.send("<h2>Starter API to learn docker with node/express.</h2><p>Code found at: <a href='https://github.com/wforbes/node-docker'>https://github.com/wforbes/node-docker</a></p>");
+	res.send("<h2>Starter API to learn docker with node/express.</h2><p>For a full guide on how to build yours see: <a href='https://github.com/wforbes/node-docker'>https://github.com/wforbes/node-docker</a></p>");
 });
 
 app.use("/api/v1/posts", postRouter);
