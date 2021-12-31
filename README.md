@@ -615,6 +615,16 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 	- In the 'deploy:' > 'update_config:' section, add 'delay:' with a value of 15s
 	- The parallelism property defines how many containers swarm should update at a time when a new version is being pulled. During that time, the other replicas will pick up the slack. This is how rolling updates are achieved.
 	- The delay just specifies the amount of time to wait between updating parallel groups of containers.
-- Now commit these changes to git and run `git pull` on the production server to pull these changes to the codebase there.
+- Deploy these changes to production with Docker Swarm:
+	- First, commit these changes to git and run `git pull` on the production server to pull these changes to the codebase there.
+	- Next, bring down the running containers on production with `docker-compose -f docker-compose.yml -f docker-compose.prod.yml down`
+	- Then, use the 'docker stack deploy' command to create our services. You can use the --help flag to see other options, but this is the command I'm using. Here I specify 'mynodeapp' to give the required name parameter something `docker stack deploy -c docker-compose.yml -c docker-compose.prod.yml mynodeapp`
+		- You can do a `docker stack --help` to see available commands
+		- You can `docker node ls` to list the current nodes in the swarm
+		- You can `docker stack ls` to list the stacks
+		- You can `docker stack services mynodeapp` to list the services, similar to running the `docker ps` we did before
+		- Similarly you can `docker service ls` to list out the services across all stacks, but we only have one stack so it'll look the same as the previous command here
+		- Finally, we can run `docker stack ps mynodeapp` to see all of the tasks that this Master Node has it's Worker Node running.
 
-... (I'm committing these changes to git to pull them on production)
+
+<span style="font-size:0.7em">(video timestamp [5:16:13](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=18973s))</span>
