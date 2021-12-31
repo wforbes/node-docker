@@ -460,4 +460,11 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 - Copy the url of your github repo and clone it into this directory
 	- `git clone https://github.com/wforbes/node-docker.git .`
 - Here's where you'll end up fixing mistakes in your .yml files ... the presenter in the video had to ... I have to as well on a different line :)
+- Once docker is finished creating the containers, you should see them running with a `docker ps` like before
+- Now we can test the api on production with Postman by now using the Digital Ocean Droplet's public IP address.
+	- Try a GET request to (ip address)/api/v1
+	- Try a POST request to ../api/v1/users/signup with a username and password
+	- Then try logging in, creating a post, and viewing all posts
+
+<span style="font-size:0.7em">(video timestamp [4:18:57](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=15537s))</span>
 
