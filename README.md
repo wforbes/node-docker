@@ -453,3 +453,11 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 - SSH back into the server and run `printenv` to verify that the environment variables were set!
 
 <span style="font-size:0.7em">(video timestamp [4:14:12](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=15252s))</span>
+
+#### Deploying app to production server
+- Create a directory called app in the root of the Ubuntu server `mkdir app`
+- Move into that directory `cd app`
+- Copy the url of your github repo and clone it into this directory
+	- `git clone https://github.com/wforbes/node-docker.git .`
+- Here's where you'll end up fixing mistakes in your .yml files ... the presenter in the video had to ... I have to as well on a different line :)
+
