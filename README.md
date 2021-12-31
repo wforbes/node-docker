@@ -589,6 +589,32 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 - Instead, we need an orchestrator.
 	- One of the most popular container orchestrators is called "Kubernetes", but that won't take an incredibly long amount of time to get up and going.
 	- Instead, we'll use "Docker Swarm" because it's fast and easy to get started with.
+- Docker-Compose is a very simple tool, it's meant as a development tool for things like spinning up new containers and tearing down old ones. It can't do things like rolling updates and we can only use it to deploy containers to one server.
+- Docker Swarm is an orchestrator, so there's more logic and brains behind it. We can distribute containers across multiple servers with it. It can spin up new containers and update them, then only when they're verified running they will be used live and the old ones torn down.
+	- Docker Swarm uses a Manager Node to handle the brains behind everything, they push tasks to Worker Nodes and the workers carry out those tasks. Nodes can be both Manager Node and Worker Node, that's what we'll do since we only have one server.
+	- We're mostly concern with the rolling updates that Docker Swarm can do.
+	- Really we SHOULDN'T use docker-compose in a production environment.
 
 
 <span style="font-size:0.7em">(video timestamp [5:03:32](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=17766s))</span>
+
+#### Docker Swarm
+- Docker Swarm gets shipped with Docker by default. It just defaults as inactive. To activate on the production server it run `docker swarm init --advertise-addr (your public ip)` and substitute in your production server's public ip address
+- This should give a message like "Swarm initialized: current node is now a manager"
+- Keep in mind there's not much different with what's available on docker swarm compared to regular docker
+	- Running `docker --help` will show what commands we have available
+	- Running `docker service --help` will show what swarm related commands we have available
+- Thankfully, we can use the docker-compose files we've already made with Docker Swarm. We just need to add some extra swarm related configuration to them.
+- The Deploy section of the docker compose file v3 docs will give us the info we need to get started. [https://docs.docker.com/compose/compose-file/compose-file-v3/#deploy](https://docs.docker.com/compose/compose-file/compose-file-v3/#deploy)
+	- The "Replicas" section in those docs will explain that this option will specify the number of containers that should be running. As our application grows, we can use this to spin up more containers to handle the load.
+	- The "RESTART_POLICY" will specify how and when it should restart containers.
+- In the docker-compose.prod.yml file, add a 'deploy:' section under the 'node-app:' service
+	- In the 'deploy:' section, add 'replicas:' with a value of 8.
+	- In the 'deploy:' section, add 'restart_policy:' with 'condition:' inside that, give it a value of 'any'.
+	- In the 'deploy:' section, add 'update_config:' with 'parallelism:' with a value of 2
+	- In the 'deploy:' > 'update_config:' section, add 'delay:' with a value of 15s
+	- The parallelism property defines how many containers swarm should update at a time when a new version is being pulled. During that time, the other replicas will pick up the slack. This is how rolling updates are achieved.
+	- The delay just specifies the amount of time to wait between updating parallel groups of containers.
+- Now commit these changes to git and run `git pull` on the production server to pull these changes to the codebase there.
+
+... (I'm committing these changes to git to pull them on production)
