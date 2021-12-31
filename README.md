@@ -561,3 +561,22 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 
 
 <span style="font-size:0.7em">(video timestamp [4:46:10](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=17170s))</span>
+
+#### Automating with watchtower
+- The last couple steps in our workflow, the 'pull' and 'up' command on the production side, can be automated.
+	- Not everyone likes the idea of automating the production pull because it can result in outages if the code wasn't perfect, so many people prefer to keep this as a manual step.
+- If it's desired, we can use [watchtower](https://containrrr.dev/watchtower/) to do this automation.
+	- From the production ssh, run the following command to bring in watchtower for demonstration purposes:
+		- `docker run -d --name watchtower -e WATCHTOWER_TRACE=true -e WATCHTOWER_DEBUG=true -e WATCHTOWER_POLL_INTERVAL=50 -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower app_node-app_1`
+		- This will run watchtower and poll dockerhub for changes on the specified container (app_node-app_1) every 50 seconds. If it sees a change, it will automatically pull and run that new image.
+		- All the details in the flags and options in this command can be found in the watchtower documentation
+	- Run `docker ps` to see watchtower in our list of running containers
+	- Run `docker logs watchtower -f` to open the logs and monitor watchtower
+- Let's try it out. Edit the code in some minor way, maybe modify the text on the root GET response
+- Next, run the 'build' and 'push' commands from the workflow steps in the previous section
+- With the changes pushed to dockerhub, watchtower should see those changes and bring them live on production in it's next 50 second poll interval
+- When you're done checking it out you can remove watchtower from production with `docker rm watchtower -f`
+- The watchtower documentation shows how to set it up in your docker-compose file if this is something you'd like to keep doing. Personally, I won't.
+
+<span style="font-size:0.7em">(video timestamp [4:56:06](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=17766s))</span>
+
