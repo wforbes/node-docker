@@ -468,3 +468,18 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 
 <span style="font-size:0.7em">(video timestamp [4:18:57](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=15537s))</span>
 
+#### Pushing changes the hard way
+- Make a minor change to the root GET response in index.js
+- Commit the change to git
+- Change directory into 'app' on production via SSH
+- Run `git pull` to pull in that minor change
+- We don't have nodemon to rebuild the project, so we need to rebuild the container for the change to take effect
+	- It's suggested to simply do an 'docker-compose ... up -d --build', but we can add '--no-deps' flag to not rebuild the mongo, redis or nginx containers, AND add the name of the server 'node-app' to the end of the command to specify that we only want to rebuild the node app container:
+		- `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build --no-deps node-app`
+- If we simply want to rebuild the node app without a change for whatever reason, we can use the '--force-recreate' flag in place of '--build':
+	- `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-recreate --no-deps node-app`
+
+( The same section plays twice here in the freecodecamp version of the tutorial. )
+
+
+<span style="font-size:0.7em">(video timestamp [4:27:32](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=16052s))</span>
