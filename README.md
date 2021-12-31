@@ -146,12 +146,12 @@
 ### Working with multiple containers
 #### Using a MongoDB container
 - For the second container in our project, we'll set up a MongoDB container to begin persisting data.
-	- On Docker Hub, searching for mongodb provides information on the official mongoDB container ([hub.docker.com/_/mongo](hub.docker.com/_/mongo))
+	- On Docker Hub, searching for mongodb provides information on the official mongoDB container ([https://hub.docker.com/_/mongo](https://hub.docker.com/_/mongo))
 	- Here starting a mongo server instance uses the `docker run --name (instance-name) -d mongo:tag` command, where tag is the MongoDB version you want
 - In our 'docker-compose.yml' file, we can add another option under 'services' with a name for the mongo instance. Here, we're using 'mongo' but it can be anything.
 - Instead of customizing the build like we did on the 'node-app' container with the 'build' option, with 'mongo' we can use the 'image' option to copy in the provided image. `image: mongo`
 	- We'd like to use the most up to date image version, so we won't specify the 'tag'
-- In the 'Environment Variables' section of ([hub.docker.com/_/mongo](hub.docker.com/_/mongo)), the two env vars we need to specify are described: **MONGO_INITDB_ROOT_USERNAME** and **MONGO_INITDB_ROOT_PASSWORD**
+- In the 'Environment Variables' section of ([https://hub.docker.com/_/mongo](https://hub.docker.com/_/mongo)), the two env vars we need to specify are described: **MONGO_INITDB_ROOT_USERNAME** and **MONGO_INITDB_ROOT_PASSWORD**
 	- We add these to the 'environment' option in the 'docker-compose.yml' file under the 'mongo' container details
 	- Give each of them any values you want
 - With this new info added to the 'docker-compose.yml' file, run our up command with the two compose files and the build flag `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build`
@@ -177,7 +177,7 @@
 - To remedy this, we need to specify volumes for this container.
 - We could create an anonymous volume like we've been doing, but this isn't always the most useful thing to do because it's hard to tell which one is which.. their names aren't easily human readable.
 - Instead, we should create a named volume. It's the same as an anonymous volume.. only with a human readable name that can easily be identified when working with it.
-- Inspecting [hub.docker.com/_/mongo](hub.docker.com/_/mongo) in the 'Where to Store Data' section, it describes creating a data directory on the host system and bind-mounting it to a directory in the container `docker run --name something -v /my/own/datadir:/data/db -d mongo`
+- Inspecting [https://hub.docker.com/_/mongo](https://hub.docker.com/_/mongo) in the 'Where to Store Data' section, it describes creating a data directory on the host system and bind-mounting it to a directory in the container `docker run --name something -v /my/own/datadir:/data/db -d mongo`
 	- That -v flag value shows the bind-mount
 - We can specify a named volume for this by adding a `volumes:` option to the service in our 'docker-compose.yml' file, then giving it a value like `- mongo-db:/data/db`.
 	- Here the 'mongo-db' is the name of the volume, followed by a colon, and then the directory of the volume
