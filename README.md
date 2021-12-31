@@ -141,7 +141,7 @@
 		`    NODE_ENV: production`
 	- We can test this change by again checking the node_modules folder in the prod container to see nodemon is not present, as well as running `printenv` in the container bash to see the 'NODE_ENV=production' environment variable set properly.
 
-<span style="font-size:0.7em">(video timestamp 1:44:48)</span>
+<span style="font-size:0.7em">(video timestamp [1:44:48](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=6287s))</span>
 
 ### Working with multiple containers
 #### Using a MongoDB container
@@ -205,7 +205,7 @@
 	- `use mydb` to switch to it
 	- `db.books.find()` to see our persisted data
 
-<span style="font-size:0.7em">(video timestamp 2:01:48)</span>
+<span style="font-size:0.7em">(video timestamp [2:01:48](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=7308s))</span>
 
 #### Communicating between containers
 - To communicate with the mongodb container, our app can use 'mongoose' so lets install it
@@ -230,7 +230,7 @@
 	- CTRL+C to stop the ping
 	- `exit` to leave the node-app container bash.
 
-<span style="font-size:0.7em">(video timestamp 2:12:00)</span>
+<span style="font-size:0.7em">(video timestamp [2:12:00](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=8505s))</span>
 
 #### Express Config file
 - You shouldn't hardcode your mongo URL in the application. It's better to create a config file to keep this in instead.
@@ -241,7 +241,7 @@
 	- We'll need to bring down the containers and rebuild them after updating the environment vars
 - We can also copy over the mongo section from docker-compose.yml to docker-compose.dev.yml and remove the 'image' section because it's shared between environments
 
-<span style="font-size:0.7em">(video timestamp 2:21:45)</span>
+<span style="font-size:0.7em">(video timestamp [2:21:45](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=8505s))</span>
 
 #### Container bootup order
 - We can't know what order the containers will start up with and this can cause problems because the node-app container needs to connect to the mongo container when it starts.
@@ -250,7 +250,7 @@
 	- The tutorial has us create a recursive function that tries to connect every. The creator isn't sure if it's the best way to do it, but he assures us we should be able to handle the database being down on our own without depending on mongoose alone.
 - You can start up the node-app container without it's dependencies with the '--no-deps' flag on `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --no-deps node-app`. This way we can test the failure state where mongo database isn't running when node-app tries to connect to it.
 
-<span style="font-size:0.7em">(video timestamp 2:32:26)</span>
+<span style="font-size:0.7em">(video timestamp [2:32:26](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=9146s))</span>
 
 #### Building a CRUD application
 - Aim to be simple, as this tutorial focuses on docker (not node/express) so these points are sparse of details
@@ -274,7 +274,7 @@
 - We also need to pass in the express.json() middleware to the app object before our route declarations
 - In the video, these changes are tested using Postman [https://www.postman.com/downloads/](https://www.postman.com/downloads/)
 
-<span style="font-size:0.7em">(video timestamp 2:51:27)</span>
+<span style="font-size:0.7em">(video timestamp [2:51:27](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=10287s))</span>
 
 #### Sign up and Login
 - Create a model, controller and routes file for 'users' like we did with 'posts'
@@ -290,7 +290,7 @@
 	- Add "/login" route to user route file
 - Test new routes and methods with Postman. Easy peazy.
 
-<span style="font-size:0.7em">(video timestamp 3:06:57)</span>
+<span style="font-size:0.7em">(video timestamp [3:06:57](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=11217s))</span>
 
 #### Authentication with sessions & Redis
 - We could use JWT or sessions, but for this tutorial we'll use sessions in order to demonstrate adding a Redis container to store the session
@@ -339,12 +339,12 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 	- Import our new file into postRoutes.js and add it as the first argument in the get(), post(), patch(), and delete() calls
 - We can test this by lowering the maxAge value to 1 min or 30 seconds.. then logging into the API with Postman and trying to create a Post on our app. Then wait for the session to expire (can confirm with redis-cli from docker exec), and trying to create another Post. We shouldn't be able to create a Post or perform the other API operations from Postman with an expired session (or before logging in).
 
-<span style="font-size:0.7em">(video timestamp 3:34:36)</span>
+<span style="font-size:0.7em">(video timestamp [3:34:36](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=12876s))</span>
 	
 #### Architecture Review
 - The presenter just discusses why/how we're going to use Nginx to load balance between multiple node/express containers that all connect to our mongodb container.
 
-<span style="font-size:0.7em">(video timestamp 3:40:48)</span>
+<span style="font-size:0.7em">(video timestamp [3:40:48](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=13248s))</span>
 
 #### Nginx for load balancing to multiple node containers
 - The nginx docker image details are found here: [https://hub.docker.com/_/nginx](https://hub.docker.com/_/nginx)
@@ -372,4 +372,13 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 	- Then open a split terminal in vscode (or run two terminal/powershell windows) and open the `docker logs node-docker_node-app_# -f` command in each. Where '#' is 1 in one terminal and 2 in the other terminal.
 	- Making a GET request to that root URL should cause node-app_1 to give the console message, then a second GET request should cause node-app_2 to give a console message. They'll trade back and forth for each successive GET request!
 
-<span style="font-size:0.7em">(video timestamp 3:54:48)</span>
+<span style="font-size:0.7em">(video timestamp [3:54:33](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=14073s))</span>
+
+#### Express CORS
+- To allow different domains to access the API we need to enable cors (cross-origin resource sharing)
+	- Details found at [https://www.npmjs.com/package/cors](https://www.npmjs.com/package/cors)
+	- First install the package with `npm install cors`
+	- Rebuild the image with a docker-compose...up -d --build -V
+	- In the index.js file, import cors and add it to the middleware section with `app.use(cors({}))`, we can leave the cors config object being passed to it empty. Save the file when that's done so that nodemon can restart the server.
+
+<span style="font-size:0.7em">(video timestamp [3:57:44](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=14264s))</span>

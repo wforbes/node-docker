@@ -2,7 +2,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const redis = require("redis");
+const cors = require("cors");
 let RedisStore = require("connect-redis")(session);
+
 
 const app = express();
 
@@ -37,9 +39,8 @@ const connectWithRetry = () => {
 connectWithRetry();
 
 app.enable("trust proxy");
-
+app.use(cors({}));
 app.use(express.json());
-
 app.use(session({
 	store: new RedisStore({ client: redisClient }),
 	secret: SESSION_SECRET,
@@ -48,13 +49,13 @@ app.use(session({
 	cookie: { // TODO: change these later
 		secure: false,	
 		httpOnly: true, //means that javascript on browser can't access
-		maxAge: 60000 * 30 // 30 mins
+		maxAge: 60000 * 1 // 30 mins
 	}
 }))
 
 app.get("/api/v1", (req, res) => {
 	res.send("<h2>Simple API to learn docker with node/express.</h2>");
-	console.log("root GET request responded to");
+	console.log("test");
 });
 
 app.use("/api/v1/posts", postRouter);
