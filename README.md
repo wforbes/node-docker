@@ -5,6 +5,23 @@
 
  Using the full video found here: [https://www.youtube.com/watch?v=9zUHg7xjIqQ](https://www.youtube.com/watch?v=9zUHg7xjIqQ)
 
+## Docker images used
+- Mongo: [https://hub.docker.com/_/mongo](https://hub.docker.com/_/mongo)
+- Redis: [https://hub.docker.com/_/redis](https://hub.docker.com/_/redis)
+- Nginx: [https://hub.docker.com/_/nginx](https://hub.docker.com/_/nginx)
+
+## Node dependencies used
+- mongoose: [https://www.npmjs.com/package/mongoose](https://www.npmjs.com/package/mongoose)
+	- Makes working with MongoDB easier
+- bcryptjs: [https://www.npmjs.com/package/bcryptjs](https://www.npmjs.com/package/bcryptjs)
+	- Used to hash user passwords so they aren't stored in the database as plain text
+- express-session: [https://github.com/expressjs/session](https://github.com/expressjs/session)
+	- Used to create a session cookie to send back to the client and store to remember that client over a specified amount of time
+- connect-redis: [https://www.npmjs.com/package/connect-redis](https://www.npmjs.com/package/connect-redis) // [https://github.com/tj/connect-redis](https://github.com/tj/connect-redis)
+	- Used to store session data in a Redis in-memory data store
+- cors: [https://www.npmjs.com/package/cors](https://www.npmjs.com/package/cors)
+	- (Optional) Used to allow access to this api from domains outside of its own
+
 ## General setup
 - Docker Desktop install on Windows instructions: [docs.docker.com/desktop/windows/install](https://docs.docker.com/desktop/windows/install/)
 - Docker requires virtualization ([Troubleshooting Docker on Windows for Virtualization](https://docs.docker.com/desktop/windows/troubleshoot/#virtualization)).
@@ -18,6 +35,9 @@
 - **.dockerignore** specifies files that shouldn't be copied into the docker container
 - **.env** specifies environment variables that should be set when the container runs
 - **docker-compose.yml** ([Docker Compose docs will explain](https://docs.docker.com/compose))
+- **docker-compose.dev.yml** & **docker-compose.prod.yml** docker compose files used to specify variations between the the development and production environments
+- **./config/config.js** configuration file used for node app
+- **./nginx/default.conf** sets proxy configuration for the nginx container
 
 ### terminal commands for working with docker
 #### basics
@@ -382,3 +402,8 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 	- In the index.js file, import cors and add it to the middleware section with `app.use(cors({}))`, we can leave the cors config object being passed to it empty. Save the file when that's done so that nodemon can restart the server.
 
 <span style="font-size:0.7em">(video timestamp [3:57:44](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=14264s))</span>
+
+- We will be deploying the app the WRONG WAY, then steadily correcting things to illustrate why we're configuring it the way we are. It may be frustrating to follow point-to-point, but I agree with the presenter that this will show first-hand experience how things should be done with the reasoning included.
+
+#### Installing docker on Ubuntu (with Digital Ocean)
+
