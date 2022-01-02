@@ -628,3 +628,18 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 
 
 <span style="font-size:0.7em">(video timestamp [5:16:13](https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=18973s))</span>
+
+
+#### Pushing changes to Swarm stack
+- Make another minor code change to the node project, save them, and build them with `docker-compose -f docker-compose.yml -f docker-compose.prod.yml build node-app`
+- Now push the changes to dockerhub with `docker-compose -f docker-compose.yml -f docker-compose.prod.yml push node-app`
+- On production, run our deploy command and this will pull in the changes from dockerhub and begin running through the parallel deployment we've configured `docker stack deploy -c docker-compose.yml -c docker-compose.prod.yml mynodeapp`
+- If you run `docker stack ps mynodeapp` over the next minute or two, you should see our node service replicas begin to show up as "Shutdown" in the DESIRED STATE column, while another version of them have a "Running" state.
+- If you hit GET requests during that time to the root route `ipaddress/api/v1`, you may see the old version of the code get returned or the new version. After a couple minutes, you will see the new version returned every request. This was the deployment rolling out changes!
+
+
+<span style="font-size:0.7em">End of the video</span>
+
+#### Final workflow cheatsheet
+
+
