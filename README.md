@@ -652,6 +652,18 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 	- router: why not?
 	- vuex: yes, please
 	- eslint: clean code, clean brains
-- Now you can run the local dev server with `npm run serve` to see the vue project
+- Now you can run the local dev server with `npm run serve` to see the vue project at `http://localhost:8080`
+	- In the interest of rapid development, this is how we will be working on the front-end. Modify some code, you'll see the hotupdate refresh the page at localhost:8080 with your changes.
+	- Go ahead and CTRL+C to stop that running local dev server when you're done testing it
+#### Setup docker container for client
+- To get docker to build our front-end app and host it from an image when it creates the container, we can create a Dockerfile in the `./client` directory.
+	- It needs to be the same as [the Vue cookbook 'dockerize vuejs' Real World Example] (https://vuejs.org/v2/cookbook/dockerize-vuejs-app.html#Real-World-Example) of the Dockerfile for NGINX
+- Next we can update our docker-compose files to trigger that Dockerfile script in ./client
+	- In docker-compose.yml: Add a `vue-client:` image to the docker-compose.yml file. Give it a `build:` command with the value `./client` and an `image:` name like `wforbes87/vue-client`
+	- In docker-compose.dev.yml: Add the `vue-client:` image with a `ports:` option that has a value of `8080:80`. This will point our localhost:8080 traffic to port 80 in the container.
+- With the other containers running, run an up command specifying a build for our vue-client image: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build vue-client`
+- Once that's complete:
+	- You should be able to run SH on that container to pok around inside it: `docker exec -it node-docker_vue-client_1 sh`
+	- You should also be able to navigate your web browser to localhost:8080 and see the built vue app served from nginx in the `node-docker_vue-client_1` container. If you made any changes to the vue boilerplate code, that should be present in this step
 
 

@@ -1,0 +1,14 @@
+FROM node:lts-alpine AS build
+WORKDIR /
+COPY package*.json ./
+RUN npm install
+COPY . ./
+RUN npm run build
+##EXPOSE 8080
+##CMD [ "npm", "run", "serve" ]
+
+FROM nginx:1.19.0-alpine AS prod-stage
+COPY --from=build /dist /usr/share/nginx/html
+ENV PORT 8080
+EXPOSE $PORT
+CMD [ "nginx", "-g", "daemon off;" ]

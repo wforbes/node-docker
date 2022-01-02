@@ -21,3 +21,6 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=wforbes
       - MONGO_INITDB_ROOT_PASSWORD=thepassword
+  vue-client:
+    ports:
+      - "8080:80"
