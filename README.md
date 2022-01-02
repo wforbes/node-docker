@@ -640,6 +640,18 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 
 <span style="font-size:0.7em">End of the video</span>
 
-#### Final workflow cheatsheet
+### Set up Vue front-end client
+#### Create the vue boilerplate with vue-cli
+- First, you'll need to globally install the vue-cli if you don't already have it
+	- Run `npm install -g @vue/cli`
+	- This will give you the ability to create our vue boilerplate code
+- From project root, run `vue create client` to set up that boilerplate
+- Pick you're favorite preset... 
+	- Vue2: My main choice for now because our UI library doesn't have full Vue 3 support yet
+	- pwa: I'd like to incorporate pwa/service-worker into this project
+	- router: why not?
+	- vuex: yes, please
+	- eslint: clean code, clean brains
+- Now you can run the local dev server with `npm run serve` to see the vue project
 
 
