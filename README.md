@@ -656,9 +656,15 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 	- In the interest of rapid development, this is how we will be working on the front-end. Modify some code, you'll see the hotupdate refresh the page at localhost:8080 with your changes.
 	- Go ahead and CTRL+C to stop that running local dev server when you're done testing it
 
-#### Setup docker container for client
+#### Setup dev docker container for client
 - To get docker to build our front-end app and host it from an image when it creates the container, we can create a Dockerfile in the `./client` directory.
-	- It needs to be the same as [the Vue cookbook 'dockerize vuejs' Real World Example] (https://vuejs.org/v2/cookbook/dockerize-vuejs-app.html#Real-World-Example) of the Dockerfile for NGINX
+	- We can use the first 5 lines of [Vuejs Docker Cookbook (Real-World Example)](https://vuejs.org/v2/cookbook/dockerize-vuejs-app.html#Real-World-Example) to create the Dockerfile with one change.
+	- We will want to call the FROM to get node, set the WORKDIR to /, COPY the package*.json files to ./, RUN npm install, and then COPY from root to root.
+	- Since this is the dev container and we'll want it to run the hot-reload, we won't build it or copy it to nginx like the example does
+
+----- Working on incorporating hot-reloading from the running container
+----- picking this back up from here next time
+
 - Next we can update our docker-compose files to trigger that Dockerfile script in ./client
 	- In docker-compose.yml: Add a `vue-client:` image to the docker-compose.yml file. Give it a `build:` command with the value `./client` and an `image:` name like `wforbes87/vue-client`
 	- In docker-compose.dev.yml: Add the `vue-client:` image with a `ports:` option that has a value of `8080:80`. This will point our localhost:8080 traffic to port 80 in the container.

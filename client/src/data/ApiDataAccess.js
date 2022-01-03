@@ -12,7 +12,7 @@ export default class ApiDataAccess {
 	}
 
 	testGet() {
-		console.log(this.requestUrl());
+		//console.log(this.requestUrl());
 		return new Promise(async (resolve) => {
 			axios
 				.get(this.requestUrl("posts"))

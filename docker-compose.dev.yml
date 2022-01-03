@@ -3,24 +3,31 @@ services:
   nginx:
     ports:
       - "3000:80"
+      #- "8080:80"
+
+  vue-app:
+    volumes:
+      - ./client:/app
+      - ./client/node_modules:/app/node_modules
+    command: npm run serve
+
   node-app:
     build:
       context: .
       args:
         NODE_ENV: development
     volumes:
-      - ./:/app
-      - /app/node_modules
+      - ./:/app/server
+      - /app/server/node_modules
     environment:
       - NODE_ENV=development
       - MONGO_USER=wforbes
       - MONGO_PASSWORD=thepassword
       - SESSION_SECRET=s1e2c3r4e5t
     command: npm run dev
+
   mongo:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=wforbes
       - MONGO_INITDB_ROOT_PASSWORD=thepassword
-  vue-client:
-    ports:
-      - "8080:80"
+
