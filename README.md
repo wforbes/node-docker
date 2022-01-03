@@ -675,3 +675,28 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 	- No trailing comma at the end of object and array member definitions
 	- Sets the end of line to auto so I can code on either of my machines (windows or linux)
 	- I have `no-async-promise-executor` set to off, because if I gave up that bad habit I'd be too perfect :)
+
+#### Gut the boilerplate, Begin feature based directory structure
+- Remove `/components/HelloWorld.vue` and remove it's references in `/views/Home.vue`
+- Begin feature based directory structure
+	- I prefer to group my Vue.js files into directories organized by the feature they're related to
+	- This means `./client/src/views/Home.vue` will be moved to `./client/src/home/views/Home.vue`
+		- In that example, 'home' is the feature. In each feature directory, there will be a 'views', 'components', and 'store' directory.
+	- This differs from the common practice of using a flat structure with one views folder and one components folder
+- (Optional) Update files to match your linting preferences
+
+#### Test API interaction to client
+- This is how I usually structure my 'data access layer' in Vue projects.
+	- To save these notes from getting too extensive, I'll just jot down the main ideas here. Inspect the code I mention for yourself to see the details.
+- Install [Axios](https://axios-http.com) to the client project with `npm install axios`
+	- This is the library we'll use to make HTTP calls to the API
+- Add directory called 'data' to the 'client' folder
+	- Here, create two files called DataAccess and ApiDataAccess.
+	- 'DataAccess' is a pseduo-interface that acts as an intermediary between the vuex data store and the 'dataContext' object.
+	- In this case, the dataContext will be 'ApiDataAccess' using axios to make calls to our node-docker API.
+	- If at some point we'd like to use a different dataContext for other situations or uses, we can add logic to make that happen.
+- At startup, the App.vue will call the "setupStore" action on the Vuex store to stand up the DataAccess object. Then, the DataAccess object will stand up ApiDataAccess and be ready to make calls to the API.
+- To test, add a `testGet()` function to ApiDataAccess which hits the API's 'posts' endpoint using axios.
+	- Remove the 'protect' middleware from the .get() functions in 'postRoute.js'
+	- Line up the Vue client to make a call that gets all the Posts from the API at startup.
+	- console.log the response to ensure its all working as expected.
