@@ -655,6 +655,7 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 - Now you can run the local dev server with `npm run serve` to see the vue project at `http://localhost:8080`
 	- In the interest of rapid development, this is how we will be working on the front-end. Modify some code, you'll see the hotupdate refresh the page at localhost:8080 with your changes.
 	- Go ahead and CTRL+C to stop that running local dev server when you're done testing it
+
 #### Setup docker container for client
 - To get docker to build our front-end app and host it from an image when it creates the container, we can create a Dockerfile in the `./client` directory.
 	- It needs to be the same as [the Vue cookbook 'dockerize vuejs' Real World Example] (https://vuejs.org/v2/cookbook/dockerize-vuejs-app.html#Real-World-Example) of the Dockerfile for NGINX
@@ -666,4 +667,11 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 	- You should be able to run SH on that container to pok around inside it: `docker exec -it node-docker_vue-client_1 sh`
 	- You should also be able to navigate your web browser to localhost:8080 and see the built vue app served from nginx in the `node-docker_vue-client_1` container. If you made any changes to the vue boilerplate code, that should be present in this step
 
-
+#### (Optional) Update the linting config for your preferences
+- I'm a big fan of linters on the front-end. You may be too. #teamtabsoverspaces
+- Update the `.eslintrc.js` to suit your needs.
+	- The settings I've added in this project enforce:
+	- Using tabs (not spaces, never spaces)
+	- No trailing comma at the end of object and array member definitions
+	- Sets the end of line to auto so I can code on either of my machines (windows or linux)
+	- I have `no-async-promise-executor` set to off, because if I gave up that bad habit I'd be too perfect :)
