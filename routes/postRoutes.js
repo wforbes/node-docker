@@ -8,7 +8,7 @@ const router = express.Router();
 //localhost:3000/
 router
 	.route("/")
-	.get(protect, postController.getAllPosts)
+	.get(postController.getAllPosts)
 	.post(protect, postController.createPost);
 
 router
