@@ -1,5 +1,5 @@
 module.exports = {
 	devServer: {
-		disableHostCheck: true
+		public: "localhost:8080"
 	}
 };
