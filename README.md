@@ -657,21 +657,24 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 	- Go ahead and CTRL+C to stop that running local dev server when you're done testing it
 
 #### Setup dev docker container for client
-- To get docker to build our front-end app and host it from an image when it creates the container, we can create a Dockerfile in the `./client` directory.
-	- We can use the first 5 lines of [Vuejs Docker Cookbook (Real-World Example)](https://vuejs.org/v2/cookbook/dockerize-vuejs-app.html#Real-World-Example) to create the Dockerfile with one change.
-	- We will want to call the FROM to get node, set the WORKDIR to /, COPY the package*.json files to ./, RUN npm install, and then COPY from root to root.
-	- Since this is the dev container and we'll want it to run the hot-reload, we won't build it or copy it to nginx like the example does
-
------ Working on incorporating hot-reloading from the running container
------ picking this back up from here next time
-
+- To get docker to build our front-end app and host it from an image when it creates the container, create a Dockerfile in the `./client` directory.
+	- Use the first 5 lines of [Vuejs Docker Cookbook (Real-World Example)](https://vuejs.org/v2/cookbook/dockerize-vuejs-app.html#Real-World-Example) to create the Dockerfile with one change.
+		- Call FROM to get node alpine, install vue/cli, set the WORKDIR to /app, COPY the package*.json files to ./, RUN npm install, and then COPY from root to root.
+		- Since this is the dev container and we want it to run the hot-reload, we won't build it or copy it to nginx like the example does.
 - Next we can update our docker-compose files to trigger that Dockerfile script in ./client
-	- In docker-compose.yml: Add a `vue-client:` image to the docker-compose.yml file. Give it a `build:` command with the value `./client` and an `image:` name like `wforbes87/vue-client`
-	- In docker-compose.dev.yml: Add the `vue-client:` image with a `ports:` option that has a value of `8080:80`. This will point our localhost:8080 traffic to port 80 in the container.
+	- In docker-compose.yml: Add a `vue-client:` service.
+		- Give it a `build:` option with the value `./client` so that our Dockerfile there is used.
+		- Set the `image:` option name like `wforbes87/vue-client` to match docker hub later.
+		- Finally, map the 8080 `ports:` between host and container `8080:8080`.
+	- In docker-compose.dev.yml: Add the `vue-client:` service. 
+		- Bind mount the `./client` path to `/app`, this way changing our project files will update them in the container.
+		- Set an `environment:` option as `- CHOKIDAR_USEPOLLING=true`, this will set the corresponding environment variable and enable polling on changes to our source code which will trigger a hot-reload
+- Add the dev environment's public URL `public: "localhost:8080"` to the devServer object in `vue.config.js`
 - With the other containers running, run an up command specifying a build for our vue-client image: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build vue-client`
 - Once that's complete:
 	- You should be able to run SH on that container to pok around inside it: `docker exec -it node-docker_vue-client_1 sh`
-	- You should also be able to navigate your web browser to localhost:8080 and see the built vue app served from nginx in the `node-docker_vue-client_1` container. If you made any changes to the vue boilerplate code, that should be present in this step
+	- You should also be able to navigate your web browser to localhost:8080 and see the built vue app served from nginx in the `node-docker_vue-client_1` container. If you made any changes to the vue boilerplate code, that should be present in this step.
+	- Making further changes to the code should trigger a hot-reload and you'll see the changes show up 5-10 seconds later (depending on your machine's CPU/RAM)
 
 #### (Optional) Update the linting config for your preferences
 - I'm a big fan of linters on the front-end. You may be too. #teamtabsoverspaces
