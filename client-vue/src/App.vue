@@ -2,7 +2,9 @@
 	<v-app>
 		<v-app-bar app color="primary" dark>
 			<div class="d-flex align-center">
-				<a class="text-h4 white--text" to="/">node-docker</a>
+				<router-link class="text-h4 white--text norm-link" :to="'/'">
+					node-docker
+				</router-link>
 			</div>
 
 			<v-spacer></v-spacer>
@@ -32,3 +34,9 @@ export default {
 	})
 };
 </script>
+
+<style>
+.norm-link {
+	text-decoration: none;
+}
+</style>
