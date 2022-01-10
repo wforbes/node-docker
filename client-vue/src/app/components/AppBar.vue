@@ -1,8 +1,20 @@
 <template>
 	<v-app-bar app color="primary" dark>
-		<div class="d-flex align-center">
+		<nav-menu :navMenuIsOpen="navMenuIsOpen" @closeNavMenu="closeNavMenu" />
+		<v-app-bar-nav-icon
+			style="display: inline"
+			@click.stop="navMenuIsOpen = !navMenuIsOpen"
+		></v-app-bar-nav-icon>
+		<div class="d-flex align-center pt-2">
 			<router-link class="text-h4 white--text norm-link" :to="'/'">
-				node-docker
+				<v-img
+					alt="Node-Docker icon"
+					class="shrink mr-2 tech-logo"
+					contain
+					:src="require('@/assets/nd-icon.png')"
+					transition="scale-transition"
+					width="45"
+				/>
 			</router-link>
 		</div>
 
@@ -16,10 +28,21 @@
 </template>
 
 <script>
+import NavMenu from "@/app/components/NavMenu.vue";
 export default {
 	name: "AppBar",
+	components: {
+		NavMenu
+	},
 	data() {
-		return {};
+		return {
+			navMenuIsOpen: null
+		};
+	},
+	methods: {
+		closeNavMenu() {
+			this.navMenuIsOpen = false;
+		}
 	}
 };
 </script>
