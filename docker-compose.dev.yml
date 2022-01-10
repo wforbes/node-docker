@@ -1,16 +1,16 @@
 version: "3"
 services:
-  nginx:
-    ports:
-      - "3000:80"
-      #- "8080:80"
+  #nginx:
+  #  ports:
+  #    - "3000:80"
+  #    - "8080:80"
 
-#  vue-app:
-#    volumes:
-#      - ./client:/app
-#    environment:
-#      - CHOKIDAR_USEPOLLING=true
-#    command: npm run serve
+  vue-app:
+    volumes:
+      - ./client-vue:/app
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    command: npm run serve
 
   node-app:
     build:
