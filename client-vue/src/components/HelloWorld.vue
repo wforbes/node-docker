@@ -2,38 +2,49 @@
 	<v-container>
 		<v-row class="text-center">
 			<v-col cols="12">
-				<v-img
-					:src="require('../assets/logo.svg')"
-					class="my-3"
-					contain
-					height="200"
-				/>
+				<v-row class="text-center">
+					<v-col class="mt-5 mb-4">
+						<h1 class="display-2 font-weight-bold mb-5">node-docker</h1>
+						<p class="subheading font-weight-regular">
+							Sample web application using Docker
+							<br />Node.js, Express.js, MongoDB, and Redis on the back-end
+							<br />Vue.js and Vuetify.js on the front-end
+						</p>
+						<p class="subheading font-weight-bold">
+							<a href="https://github.com/wforbes/node-docker" target="_blank">
+								Source code on Github.com
+							</a>
+						</p>
+					</v-col>
+				</v-row>
+				<v-row class="justify-center">
+					<v-col v-for="(item, i) of tech_items" :key="i" cols="2" sm="1">
+						<a :href="item.href" target="_blank">
+							<v-img
+								:alt="item.alt"
+								class="shrink mr-2 tech-logo"
+								contain
+								:src="item.srcReq"
+								transition="scale-transition"
+								:width="item.width"
+							/>
+						</a>
+					</v-col>
+				</v-row>
 			</v-col>
-
-			<v-col class="mb-4">
-				<h1 class="display-2 font-weight-bold mb-3">Welcome to Vuetify</h1>
-
-				<p class="subheading font-weight-regular">
-					For help and collaboration with other Vuetify developers,
-					<br />please join our online
-					<a href="https://community.vuetifyjs.com" target="_blank"
-						>Discord Community</a
-					>
-				</p>
-			</v-col>
-
+		</v-row>
+		<v-row class="text-center">
 			<v-col class="mb-5" cols="12">
-				<h2 class="headline font-weight-bold mb-3">What's next?</h2>
+				<h2 class="headline font-weight-bold mb-3">What's it do?</h2>
 
 				<v-row justify="center">
 					<a
-						v-for="(next, i) in whatsNext"
+						v-for="(item, i) in whatsItDo"
 						:key="i"
-						:href="next.href"
+						:href="item.href"
 						class="subheading mx-3"
-						target="_blank"
 					>
-						{{ next.text }}
+						{{ item.text }}
 					</a>
 				</v-row>
 			</v-col>
@@ -53,22 +64,6 @@
 					</a>
 				</v-row>
 			</v-col>
-
-			<v-col class="mb-5" cols="12">
-				<h2 class="headline font-weight-bold mb-3">Ecosystem</h2>
-
-				<v-row justify="center">
-					<a
-						v-for="(eco, i) in ecosystem"
-						:key="i"
-						:href="eco.href"
-						class="subheading mx-3"
-						target="_blank"
-					>
-						{{ eco.text }}
-					</a>
-				</v-row>
-			</v-col>
 		</v-row>
 	</v-container>
 </template>
@@ -78,56 +73,77 @@ export default {
 	name: "HelloWorld",
 
 	data: () => ({
-		ecosystem: [
+		tech_items: [
 			{
-				text: "vuetify-loader",
-				href: "https://github.com/vuetifyjs/vuetify-loader"
+				href: "https://vuejs.org/",
+				alt: "Vue Logo",
+				srcReq: require("@/assets/vue-logo.png"),
+				width: "40"
 			},
 			{
-				text: "github",
-				href: "https://github.com/vuetifyjs/vuetify"
+				href: "https://vuetifyjs.com/",
+				alt: "Vuetify Logo",
+				srcReq: require("@/assets/vuetify-logo.svg"),
+				width: "40"
 			},
 			{
-				text: "awesome-vuetify",
-				href: "https://github.com/vuetifyjs/awesome-vuetify"
+				href: "https://nodejs.org/",
+				alt: "Nodejs Logo",
+				srcReq: require("@/assets/nodejs-icon.svg"),
+				width: "60"
+			},
+			{
+				href: "https://expressjs.com/",
+				alt: "Expressjs Logo",
+				srcReq: require("@/assets/expressjs-icon.svg"),
+				width: "60"
+			},
+			{
+				href: "https://mongodb.com/",
+				alt: "Mongo Logo",
+				srcReq: require("@/assets/mongodb-icon.svg"),
+				width: "60"
+			},
+			{
+				href: "https://redis.io/",
+				alt: "Redis Logo",
+				srcReq: require("@/assets/redis-icon.svg"),
+				width: "60"
+			}
+		],
+		whatsItDo: [
+			{
+				href: "/auth-module-info",
+				text: "Account System"
+			},
+			{
+				href: "/blog-module-info",
+				text: "Blog System"
+			},
+			{
+				href: "/kanban-module-info",
+				text: "Kanban Board"
+			},
+			{
+				href: "/chat-module-info",
+				text: "Instant Message Chat System"
 			}
 		],
 		importantLinks: [
 			{
-				text: "Documentation",
-				href: "https://vuetifyjs.com"
+				href: "https://www.freecodecamp.org/news/learn-docker-by-building-a-node-express-app/",
+				text: "'Learn Docker by Building a Node / Express App' by Sanjeev Thiyagarjan"
 			},
 			{
-				text: "Chat",
-				href: "https://community.vuetifyjs.com"
-			},
-			{
-				text: "Made with Vuetify",
-				href: "https://madewithvuejs.com/vuetify"
-			},
-			{
-				text: "Twitter",
-				href: "https://twitter.com/vuetifyjs"
-			},
-			{
-				text: "Articles",
-				href: "https://medium.com/vuetify"
-			}
-		],
-		whatsNext: [
-			{
-				text: "Explore components",
-				href: "https://vuetifyjs.com/components/api-explorer"
-			},
-			{
-				text: "Select a layout",
-				href: "https://vuetifyjs.com/getting-started/pre-made-layouts"
-			},
-			{
-				text: "Frequently Asked Questions",
-				href: "https://vuetifyjs.com/getting-started/frequently-asked-questions"
+				href: "https://www.youtube.com/channel/UC2sYgV-NV6S5_-pqLGChoNQ",
+				text: "Sanjeev Thiyagarajan's YouTube Channel"
 			}
 		]
 	})
 };
 </script>
+<style>
+.tech-logo {
+	display: inline-block;
+}
+</style>
