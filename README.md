@@ -1,5 +1,5 @@
 # node-docker
- Sample API to learn docker with node/express.
+ Starter web app project to learn docker with vue, node, express, mongodb and redis
  
  Following along with: [https://freecodecamp.com/news/learn-docker-by-building-a-node-express-app](https://freecodecamp.com/news/learn-docker-by-building-a-node-express-app)
 
