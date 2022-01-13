@@ -19,7 +19,7 @@
 		</div>
 
 		<v-spacer></v-spacer>
-
+		<v-btn @click="openAuthPage()">Signup</v-btn>
 		<v-btn href="https://wforbes.net/" target="_blank" text>
 			<span class="mr-2">Author's Site</span>
 			<v-icon>mdi-open-in-new</v-icon>
@@ -42,6 +42,9 @@ export default {
 	methods: {
 		closeNavMenu() {
 			this.navMenuIsOpen = false;
+		},
+		openAuthPage() {
+			this.$router.push("signup");
 		}
 	}
 };

@@ -14,7 +14,19 @@ const routes = [
 		path: "/about",
 		name: "About",
 		component: () =>
-			import(/* webpackChunkName: "about" */ "@/home/views/AboutPage.vue")
+			import(/* webpackChunkName: "home" */ "@/home/views/AboutPage.vue")
+	},
+	{
+		path: "/auth",
+		name: "Auth",
+		component: () =>
+			import(/* webpackChunkName: "auth" */ "@/auth/views/AuthPage.vue"),
+		alias: ["/login", "/signup", "/verify", "/logout"],
+		props: (route) => ({
+			route: route.path,
+			email: route.query.e,
+			hash: route.query.h
+		})
 	}
 ];
 
