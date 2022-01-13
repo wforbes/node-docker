@@ -44,7 +44,8 @@ export default {
 			this.navMenuIsOpen = false;
 		},
 		openAuthPage() {
-			this.$router.push("signup");
+			if (this.$router.currentRoute.path !== "/signup")
+				this.$router.push("signup");
 		}
 	}
 };
