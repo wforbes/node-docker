@@ -31,7 +31,13 @@ export default {
 	},
 	data: () => ({
 		//
-	})
+	}),
+	async created() {
+		await this.$store.dispatch({
+			type: "setupStore",
+			vue: this
+		});
+	}
 };
 </script>
 

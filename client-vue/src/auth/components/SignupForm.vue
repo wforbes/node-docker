@@ -40,8 +40,10 @@
 								:rules="[
 									rules.required,
 									rules.usernameLength,
-									rules.usernameValid
+									rules.usernameValid,
+									usernameIsUnique
 								]"
+								ref="usernameField"
 							></v-text-field>
 							<v-text-field
 								outlined
@@ -145,6 +147,7 @@ export default {
 			upperCaseLetterMsg: "one uppercase letter",
 			containsNumberMsg: "one number",
 			containsSpecialCharMsg: "one special character",
+			usernameTakenMsg: "That username is taken",
 			signupValid: true,
 			signupFeedback: "",
 			signupErrors: [],
@@ -155,8 +158,9 @@ export default {
 			newRepeatPassword: "",
 			emailTakenMsg: "",
 			emailValidationMsg: "",
-			usernameTakenMsg: "",
 			usernameValidationMsg: "",
+			usernameIsUnique: true,
+			usernameUniqueMsg: "",
 			passwordValidationMsg: "",
 			passwordMatchMsg: "",
 			rules: {
@@ -178,6 +182,13 @@ export default {
 			}
 		};
 	},
+	watch: {
+		async newUsername(newV, oldV) {
+			if (newV !== oldV) {
+				this.validateUsernameExistence(newV);
+			}
+		}
+	},
 	methods: {
 		openDashboard() {
 			this.$router.push("dashboard");
@@ -190,6 +201,40 @@ export default {
 		},
 		async submitSignup() {
 			console.log("sign up submitted");
+
+			this.showLoading = true;
+			await this.$store
+				.dispatch({
+					type: "submitSignup",
+					signupData: {
+						username: this.newUsername,
+						password: this.newPassword,
+						repeatPassword: this.newRepeatPassword,
+						email: this.newEmail
+					}
+				})
+				.then((user) => {
+					if (this.isEmpty(user)) {
+						this.signupFeedback = "<ul style='list-style:none; padding:0;'>";
+						this.signupFeedback +=
+							"<li style='color:red;'><strong>There was a problem</strong></li>";
+						this.signupFeedback += "</ul>";
+						/*
+						this.signupErrors = errors;
+						this.signupFeedback = "<ul style='list-style:none; padding:0;'>";
+						for (let msg of this.signupErrors) {
+							this.signupFeedback +=
+								"<li style='color:red;'><strong>" + msg + "</strong></li>";
+						}
+						this.signupFeedback += "</ul>";
+						*/
+					} else {
+						this.submittedEmail = this.newEmail;
+						this.signupSubmitted = true;
+						this.resetSignupForm();
+					}
+					this.showLoading = false;
+				});
 		},
 		isValidUsername(username) {
 			if (!username) return false;
@@ -202,6 +247,52 @@ export default {
 			return (
 				formValid && startValid && dotScoreValid && endValid && startNumberValid
 			);
+		},
+		async validateUsernameExistence(username) {
+			//if username is under the minimum length, don't bother
+			if (this.newUsername.length <= 2) return;
+			let isUnique = true;
+
+			//ensure the app is done setting up, then see if
+			//	username is unique
+			if (this.$store.getters.setupDone)
+				isUnique = await this.isUniqueUsername(username);
+
+			// if it isn't unique
+			if (!isUnique) {
+				// but the username field is not invalidated
+				if (this.$refs.usernameField.error === false) {
+					this.usernameIsUnique = false; // update rule boolean
+					// check to see if this error message is present
+					let errorIdx = this.$refs.usernameField.errorMessages.findIndex(
+						(x) => x === this.usernameTakenMsg
+					);
+					// if its not present, then display this error message
+					if (errorIdx === -1)
+						this.$refs.usernameField.errorMessages.push(this.usernameTakenMsg);
+				}
+			} else {
+				// if it IS unique, check if there are error messages
+				if (this.$refs.usernameField.errorMessages.length > 0) {
+					// check if this error message is present
+					let errorIdx = this.$refs.usernameField.errorMessages.findIndex(
+						(x) => x === this.usernameTakenMsg
+					);
+					// if it is, then remove it
+					if (errorIdx !== -1)
+						this.$refs.usernameField.errorMessages.splice(errorIdx, 1);
+				}
+				this.usernameIsUnique = true; // update rule boolean
+			}
+		},
+		async isUniqueUsername(username) {
+			if (!username) return false;
+			this.usernameUniqueMsg = "";
+			const usernameExists = await this.$store.dispatch({
+				type: "userExists",
+				username: this.newUsername
+			});
+			return !usernameExists;
 		},
 		usernameContainsNoSpecialChars(str) {
 			if (this.noSpecialCharRegex.test(str)) {
