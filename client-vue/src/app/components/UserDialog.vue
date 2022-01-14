@@ -29,7 +29,7 @@
 									<v-list-item-title>Account Management</v-list-item-title>
 								</v-list-item-content>
 							</v-list-item>
-							<v-list-item link @click="logout">
+							<v-list-item @click.native="logout">
 								<v-list-item-icon>
 									<v-icon>mdi-logout</v-icon>
 								</v-list-item-icon>
@@ -64,17 +64,17 @@ export default {
 	},
 	methods: {
 		routeTo(routeName) {
-			this.closeDialog();
 			this.listSelection = null;
+			this.closeDialog();
 			if (this.$router.currentRoute.path !== `/${routeName}`)
 				return this.$router.push({ path: routeName });
-
 			return;
 		},
 		logout() {
+			this.listSelection = null;
 			this.$store.dispatch("logoutUser");
 			this.closeDialog();
-			this.$router.push("logout");
+			this.$router.push({ path: "logout" });
 		},
 		closeDialog() {
 			this.$emit("closeDialog");
