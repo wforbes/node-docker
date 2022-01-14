@@ -27,6 +27,14 @@ const routes = [
 			email: route.query.e,
 			hash: route.query.h
 		})
+	},
+	{
+		path: "/dashboard",
+		name: "Dashboard",
+		component: () =>
+			import(
+				/* webpackChunkName: "dashboard" */ "@/user/views/DashboardPage.vue"
+			)
 	}
 ];
 
