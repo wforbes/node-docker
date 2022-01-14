@@ -21,14 +21,14 @@
 						fixed-tabs
 						icons-and-text
 					>
-						<v-tab :key="0">
+						<v-tab :key="0" @click="setRoute('signup')">
 							Signup
 							<v-icon>mdi-account-plus</v-icon>
 						</v-tab>
 						<v-tab-item :key="0">
 							<SignupForm />
 						</v-tab-item>
-						<v-tab :key="1">
+						<v-tab :key="1" @click="setRoute('login')">
 							Log In
 							<v-icon>mdi-login</v-icon>
 						</v-tab>
@@ -74,6 +74,13 @@ export default {
 	created() {
 		this.tabsKey =
 			this.route.substring(1) === "login" ? this.loginKey : this.signupKey;
+	},
+	methods: {
+		setRoute(routeName) {
+			if (this.$router.currentRoute.path !== `/${routeName}`) {
+				return this.$router.push({ path: routeName });
+			}
+		}
 	}
 };
 </script>
