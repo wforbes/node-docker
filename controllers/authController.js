@@ -3,13 +3,17 @@ const User = require("../models/userModel");
 
 exports.checkSession = async (req, res) => {
 	const { user } = req.session;
+	
 	if (!user) {
-		res.status(200).json({
-			status: "fail"
+		return res.status(200).json({
+			status: "fail",
+			data: {
+				message: "No session found"
+			}
 		});
 	}
 	
-	res.status(200).json({
+	return res.status(200).json({
 		status: "success",
 		data: {
 			user: {
