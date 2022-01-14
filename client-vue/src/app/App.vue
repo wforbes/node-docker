@@ -14,7 +14,7 @@
 						cols="12"
 						class="pa-0 mx-auto mt-5"
 					>
-						<router-view></router-view>
+						<router-view :key="$route.fullPath"></router-view>
 					</v-col>
 				</v-row>
 			</v-container>
