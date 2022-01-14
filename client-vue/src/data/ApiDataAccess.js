@@ -24,7 +24,7 @@ export default class ApiDataAccess {
 				})
 				.then((response) => {
 					if (!this.vue.isEmpty(response.data.status)) {
-						return resolve(response.data.data);
+						return resolve(response.data);
 					}
 					return resolve(response.data);
 				});
@@ -43,8 +43,9 @@ export default class ApiDataAccess {
 					}
 				})
 				.then((response) => {
+					console.log(response);
 					if (!this.vue.isEmpty(response) && !this.vue.isEmpty(response.data)) {
-						return resolve(response.data.data);
+						return resolve(response.data);
 					}
 					return resolve(response);
 				});
@@ -59,5 +60,11 @@ export default class ApiDataAccess {
 	}
 	checkSession() {
 		return this.get("users/checkSession");
+	}
+	submitLogin(data) {
+		return this.post("users/login", data);
+	}
+	logout() {
+		return this.post("users/logout");
 	}
 }

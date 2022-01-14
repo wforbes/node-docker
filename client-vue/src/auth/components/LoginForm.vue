@@ -3,12 +3,9 @@
 		<v-container>
 			<v-row>
 				<v-col align="center">
-					<div v-if="loginErrors.length >= 1">
+					<div v-if="loginFeedback.length > 0">
 						<h5 class="text-h6">
-							Sorry, there
-							<span v-if="loginErrors.length === 1">was a problem</span>
-							<span v-else-if="loginErrors.length >= 2">were problems</span>
-							with your login request:
+							Sorry, there was a problem with your login request:
 						</h5>
 						<span v-html="loginFeedback"></span>
 					</div>
@@ -72,42 +69,23 @@ export default {
 		submitLogin() {
 			this.loginErrors = [];
 			console.log("login attempt");
-			/*
 			this.$store
 				.dispatch({
 					type: "submitLogin",
 					loginData: {
-						u: this.loginUsername,
-						p: this.loginPassword
+						username: this.loginUsername,
+						password: this.loginPassword
 					}
 				})
-				.then((response) => {
-					this.loginFeedback = response;
-					if (response.data["success"]) {
-						this.loginFeedback = response.data["success"];
-						this.$store.dispatch({
-							type: "loginUser",
-							userId: response.data["success"]["userId"],
-							username: response.data["success"]["username"],
-							userEmail: response.data["success"]["userEmail"],
-							userProfileId: response.data["success"]["userProfileId"]
-						});
-						this.$emit("closeDialog");
+				.then((results) => {
+					if (results.success) {
 						if (this.$route.path !== "/dashboard") {
 							this.$router.push("dashboard");
 						}
-					} else if (response.data["errors"]) {
-						this.loginFeedback = response.data["errors"];
-						this.loginErrors = response.data["errors"];
-						this.loginFeedback = "<ul style='list-style:none; padding:0;'>";
-						for (let msg of this.loginErrors) {
-							this.loginFeedback +=
-								"<li style='color:red;'><strong>" + msg + "</strong></li>";
-						}
-						this.loginFeedback += "</ul>";
+					} else if (!this.isEmpty(results.message)) {
+						this.loginFeedback = results.message;
 					}
 				});
-				*/
 		},
 		resetLoginForm() {
 			this.loginUsername = "";

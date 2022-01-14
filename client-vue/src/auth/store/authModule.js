@@ -25,7 +25,7 @@ export default {
 			return rootState.da.checkSession().then((responseData) => {
 				if (!U.isEmpty(responseData.user)) {
 					dispatch({
-						type: "loginUser",
+						type: "setLoggedIn",
 						user: responseData.user
 					});
 				} else {
@@ -42,12 +42,12 @@ export default {
 				return Promise.resolve(response.exists);
 			});
 		},
-		async submitSignup({ rootGetters, dispatch }, { signupData }) {
+		submitSignup({ rootGetters, dispatch }, { signupData }) {
 			return rootGetters.da.submitSignup(signupData).then((response) => {
 				if (!U.isEmpty(response.newUser)) {
 					const user = response.newUser;
 					dispatch({
-						type: "loginUser",
+						type: "setLoggedIn",
 						user
 					});
 					return Promise.resolve(user);
@@ -55,9 +55,28 @@ export default {
 				return Promise.resolve();
 			});
 		},
-		loginUser({ commit, getters }, { user }) {
+		submitLogin({ rootGetters, dispatch }, { loginData }) {
+			return rootGetters.da.submitLogin(loginData).then((response) => {
+				if (response.status === "success") {
+					const { user } = response;
+					dispatch({
+						type: "setLoggedIn",
+						user
+					});
+					return Promise.resolve({ success: true });
+				}
+				return Promise.resolve({ success: false, message: response.message });
+			});
+		},
+		setLoggedIn({ commit, getters }, { user }) {
 			commit("setUser", user);
 			commit("setLoginStatus", getters.LOGIN_STATES.IN);
+		},
+		logoutUser({ rootGetters, getters, commit }) {
+			return rootGetters.da.logout().then(() => {
+				commit("setLoginStatus", getters.LOGIN_STATES.OUT);
+				return Promise.resolve();
+			});
 		}
 	},
 	mutations: {

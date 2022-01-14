@@ -5,9 +5,7 @@ exports.exists = async (req, res) => {
 
 	if (!username) res.status(200).json({
 		status: "fail",
-		data: {
-			errors: "Username is required"
-		}
+		errors: "Username is required"
 	});
 
 	try {
@@ -17,16 +15,12 @@ exports.exists = async (req, res) => {
 		if (user) {
 			res.status(200).json({
 				status: "success",
-				data: {
-					exists: true
-				}
+				exists: true
 			});
 		} else {
 			res.status(200).json({
 				status: "success",
-				data: {
-					exists: false
-				}
+				exists: false
 			});
 		}
 	} catch (e) {
