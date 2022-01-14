@@ -12,7 +12,7 @@
 				<v-card>
 					<v-list>
 						<v-subheader>USER OPTIONS</v-subheader>
-						<v-list-item-group color="primary">
+						<v-list-item-group color="primary" v-model="listSelection">
 							<v-list-item link @click.native="routeTo('dashboard')">
 								<v-list-item-icon>
 									<v-icon>mdi-view-dashboard-variant</v-icon>
@@ -51,7 +51,7 @@ export default {
 	props: ["dialogOpen"],
 	data() {
 		return {
-			//toolbarTitle: "Hello, " + this.username
+			listSelection: null
 		};
 	},
 	computed: {
@@ -65,13 +65,16 @@ export default {
 	methods: {
 		routeTo(routeName) {
 			this.closeDialog();
-			//this.$refs.userDialog.hideOverlay();
-			return this.$router.push({ path: routeName });
+			this.listSelection = null;
+			if (this.$router.currentRoute.path !== `/${routeName}`)
+				return this.$router.push({ path: routeName });
+
+			return;
 		},
 		logout() {
-			this.$router.push("logout");
-			this.closeDialog();
 			this.$store.dispatch("logoutUser");
+			this.closeDialog();
+			this.$router.push("logout");
 		},
 		closeDialog() {
 			this.$emit("closeDialog");
