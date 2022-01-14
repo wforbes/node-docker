@@ -36,6 +36,7 @@ export default new Vuex.Store({
 			});
 			dispatch("setHost");
 			dispatch("setDataAccess");
+			dispatch("initSession");
 			commit("setSetupDone", true);
 		},
 		setVue({ commit }, { vue }) {

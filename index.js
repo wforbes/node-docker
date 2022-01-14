@@ -39,7 +39,19 @@ const connectWithRetry = () => {
 connectWithRetry();
 
 app.enable("trust proxy");
-app.use(cors({}));
+const whitelist = ["http://localhost", "http://localhost:8080"]
+app.use(
+	cors({ 
+		origin: (origin, callback) => {
+			if (whitelist.indexOf(origin) !== -1 || !origin) {
+				callback(null, true);
+			} else {
+				callback(new Error("Not allowed CORS origin"));
+			}
+		},
+		credentials: true
+	})
+);
 app.use(express.json());
 app.use(session({
 	store: new RedisStore({ client: redisClient }),
@@ -49,7 +61,7 @@ app.use(session({
 	cookie: { // TODO: change these later
 		secure: false,	
 		httpOnly: true, //means that javascript on browser can't access
-		maxAge: 60000 * 1 // 30 mins
+		maxAge: 60000 * 30 // 30 mins
 	}
 }))
 

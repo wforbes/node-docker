@@ -1,6 +1,27 @@
 const bcrypt = require("bcryptjs")
 const User = require("../models/userModel");
 
+exports.checkSession = async (req, res) => {
+	const { user } = req.session;
+	if (!user) {
+		res.status(200).json({
+			status: "fail"
+		});
+	}
+	
+	res.status(200).json({
+		status: "success",
+		data: {
+			user: {
+				username: user.username,
+				id: user._id,
+				email: user.email
+			}
+		}
+	})
+	
+};
+
 exports.signup = async (req, res) => {
 	const { username, password, email } = req.body;
 	try {

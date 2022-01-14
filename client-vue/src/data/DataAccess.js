@@ -10,4 +10,7 @@ export default class DataAccess {
 	submitSignup(data) {
 		return this.dataContext.submitSignup(data);
 	}
+	checkSession() {
+		return this.dataContext.checkSession();
+	}
 }

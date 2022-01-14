@@ -5,6 +5,7 @@ export default class ApiDataAccess {
 	host;
 	constructor(vue) {
 		this.vue = vue;
+		axios.defaults.withCredentials = true;
 	}
 
 	requestUrl(endpoint) {
@@ -50,26 +51,13 @@ export default class ApiDataAccess {
 		});
 	}
 
-	head(endpoint, options = {}) {
-		return new Promise((resolve) => {
-			axios
-				.head(
-					this.requestUrl(endpoint) +
-						(!this.vue.isEmpty(options) ? `${options.id}` : "")
-				)
-				.catch((error) => {
-					return resolve(error);
-				})
-				.then((response) => {
-					return resolve(response.data.status);
-				});
-		});
-	}
-
 	userExists(username) {
 		return this.get(`users/userExists/${username}`);
 	}
 	submitSignup(data) {
 		return this.post("users/signup", data);
+	}
+	checkSession() {
+		return this.get("users/checkSession");
 	}
 }
