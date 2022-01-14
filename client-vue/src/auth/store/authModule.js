@@ -29,7 +29,7 @@ export default {
 						user: responseData.user
 					});
 				} else {
-					dispatch({
+					commit({
 						type: "setLoginStatus",
 						status: getters.LOGIN_STATES.OUT
 					});
