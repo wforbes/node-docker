@@ -62,7 +62,9 @@ app.use(session({
 		secure: false,	
 		httpOnly: true, //means that javascript on browser can't access
 		maxAge: 60000 * 30 // 30 mins
-	}
+	},
+	rolling: true,
+	resave: true
 }))
 
 app.get("/api/v1", (req, res) => {
