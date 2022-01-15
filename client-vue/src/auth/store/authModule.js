@@ -1,20 +1,19 @@
 import U from "@/lib/util/Util.js";
 export default {
+	namespaced: true,
 	state: {
 		LOGIN_STATES: {
 			IN: "in",
 			OUT: "out",
 			LOADING: "loading"
 		},
-		loginStatus: false,
-		user: {}
+		loginStatus: false
 	},
 	getters: {
 		LOGIN_STATES: (state) => state.LOGIN_STATES,
 		loginStatus: (state) => state.loginStatus,
 		isLoggedIn: (state) => state.loginStatus === state.LOGIN_STATES.IN,
-		loginIsLoading: (state) => state.loginStatus === state.LOGIN_STATES.LOADING,
-		user: (state) => state.user
+		loginIsLoading: (state) => state.loginStatus === state.LOGIN_STATES.LOADING
 	},
 	actions: {
 		initSession({ commit, dispatch, getters, rootState }) {
@@ -29,9 +28,9 @@ export default {
 						user: responseData.user
 					});
 				} else {
-					commit({
-						type: "setLoginStatus",
-						status: getters.LOGIN_STATES.OUT
+					dispatch({
+						type: "setLoggedOut",
+						user: {}
 					});
 				}
 				return Promise.resolve();
@@ -68,21 +67,23 @@ export default {
 				return Promise.resolve({ success: false, message: response.message });
 			});
 		},
-		setLoggedIn({ commit, getters }, { user }) {
-			commit("setUser", user);
+		setLoggedIn({ dispatch, commit, getters }, { user }) {
+			dispatch("user/setUser", { user }, { root: true });
 			commit("setLoginStatus", getters.LOGIN_STATES.IN);
 		},
-		logoutUser({ rootGetters, getters, commit }) {
+		setLoggedOut({ dispatch, commit, getters }) {
+			dispatch("user/setUser", { user: {} }, { root: true });
+			commit("setLoginStatus", getters.LOGIN_STATES.OUT);
+		},
+		logoutUser({ rootGetters, dispatch, getters, commit }) {
 			return rootGetters.da.logout().then(() => {
+				dispatch("user/setUser", { user: {} }, { root: true });
 				commit("setLoginStatus", getters.LOGIN_STATES.OUT);
 				return Promise.resolve();
 			});
 		}
 	},
 	mutations: {
-		setUser(state, user) {
-			state.user = U.cloneDeep(user);
-		},
 		setLoginStatus(state, status) {
 			state.loginStatus = status;
 		}

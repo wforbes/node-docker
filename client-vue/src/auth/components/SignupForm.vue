@@ -205,7 +205,7 @@ export default {
 			this.showLoading = true;
 			await this.$store
 				.dispatch({
-					type: "submitSignup",
+					type: "auth/submitSignup",
 					signupData: {
 						username: this.newUsername,
 						password: this.newPassword,
@@ -249,8 +249,19 @@ export default {
 			);
 		},
 		async validateUsernameExistence(username) {
-			//if username is under the minimum length, don't bother
-			if (this.newUsername.length <= 2) return;
+			//if username isn't valid, don't bother
+			// TODO: still need to find regex to handle
+			//	triggering invalidation with % in the name
+			//	in time to hit this if with errorMessages.
+			if (
+				(this.$refs.usernameField.errorMessages.length > 0 &&
+					this.$refs.usernameField.errorMessages.findIndex(
+						(x) => x === this.usernameTakenMsg
+					) === -1) ||
+				username.includes("%")
+			)
+				return;
+
 			let isUnique = true;
 
 			//ensure the app is done setting up, then see if
@@ -289,7 +300,7 @@ export default {
 			if (!username) return false;
 			this.usernameUniqueMsg = "";
 			const usernameExists = await this.$store.dispatch({
-				type: "userExists",
+				type: "auth/userExists",
 				username: this.newUsername
 			});
 			return !usernameExists;

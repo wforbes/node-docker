@@ -3,12 +3,15 @@ import Vuex from "vuex";
 
 import DataAccess from "@/data/DataAccess.js";
 import Auth from "@/auth/store/authModule.js";
+import User from "@/user/store/userModule.js";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+	namespaced: true,
 	modules: {
-		Auth
+		auth: Auth,
+		user: User
 	},
 	state: {
 		vue: undefined,
@@ -36,7 +39,7 @@ export default new Vuex.Store({
 			});
 			dispatch("setHost");
 			dispatch("setDataAccess");
-			await dispatch("initSession");
+			await dispatch("auth/initSession");
 			commit("setSetupDone", true);
 		},
 		setVue({ commit }, { vue }) {

@@ -71,7 +71,7 @@ export default {
 			console.log("login attempt");
 			this.$store
 				.dispatch({
-					type: "submitLogin",
+					type: "auth/submitLogin",
 					loginData: {
 						username: this.loginUsername,
 						password: this.loginPassword

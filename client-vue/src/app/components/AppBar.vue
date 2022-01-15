@@ -20,7 +20,11 @@
 			</div>
 
 			<v-spacer></v-spacer>
-			<v-btn v-if="$store.getters.isLoggedIn" @click="openUserDialog()" icon>
+			<v-btn
+				v-if="$store.getters['auth/isLoggedIn']"
+				@click="openUserDialog()"
+				icon
+			>
 				<v-icon>mdi-account</v-icon>
 			</v-btn>
 			<div v-else>

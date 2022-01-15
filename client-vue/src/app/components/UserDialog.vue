@@ -56,7 +56,7 @@ export default {
 	},
 	computed: {
 		username() {
-			return this.$store.getters.user.username;
+			return this.$store.getters["user/user"].username;
 		},
 		toolbarTitle() {
 			return "Hello, " + this.username + " !";
@@ -72,7 +72,7 @@ export default {
 		},
 		logout() {
 			this.listSelection = null;
-			this.$store.dispatch("logoutUser");
+			this.$store.dispatch("auth/logoutUser");
 			this.closeDialog();
 			this.$router.push({ path: "logout" });
 		},
