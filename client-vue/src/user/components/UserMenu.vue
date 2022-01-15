@@ -28,7 +28,8 @@ export default {
 	},
 	methods: {
 		navigateTo(path) {
-			console.log(path);
+			if (this.$router.currentRoute.path !== `/${path}`)
+				this.$router.push(`/${path}`);
 		}
 	}
 };

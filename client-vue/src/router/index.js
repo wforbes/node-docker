@@ -35,6 +35,14 @@ const routes = [
 			import(
 				/* webpackChunkName: "dashboard" */ "@/user/views/DashboardPage.vue"
 			)
+	},
+	{
+		path: "/edit-profile",
+		name: "EditProfile",
+		component: () =>
+			import(
+				/* webpackChunkName: "dashboard" */ "@/user/views/EditProfilePage.vue"
+			)
 	}
 ];
 
