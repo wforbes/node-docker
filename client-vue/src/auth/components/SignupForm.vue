@@ -249,6 +249,7 @@ export default {
 			);
 		},
 		async validateUsernameExistence(username) {
+			if (this.isEmpty(this.$refs.usernameField)) return;
 			//if username isn't valid, don't bother
 			// TODO: still need to find regex to handle
 			//	triggering invalidation with % in the name
