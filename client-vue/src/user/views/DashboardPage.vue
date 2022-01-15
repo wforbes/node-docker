@@ -2,14 +2,21 @@
 	<v-container>
 		<v-row>
 			<v-col>
-				<h1>Dashboard</h1>
-			</v-col>
-		</v-row>
-		<v-row>
-			<v-col>
 				<div v-if="isLoggedIn">
-					<v-card class="pa-2" min-height="420">
-						<p>Logged in as {{ user.username }}.</p>
+					<v-card class="pa-5" min-height="420">
+						<v-row>
+							<v-col>
+								<p class="text-h3">{{ user.username }}</p>
+							</v-col>
+							<v-col>
+								<v-row>
+									<UserMenu />
+								</v-row>
+							</v-col>
+						</v-row>
+						<v-row>
+							<FeatureMenu />
+						</v-row>
 					</v-card>
 				</div>
 				<div v-else>
@@ -21,20 +28,24 @@
 </template>
 <script>
 import NotLoggedInView from "@/app/views/NotLoggedInView.vue";
+import FeatureMenu from "@/user/components/FeatureMenu.vue";
+import UserMenu from "@/user/components/UserMenu.vue";
 export default {
 	name: "DashboardPage",
 	components: {
-		NotLoggedInView
+		NotLoggedInView,
+		FeatureMenu,
+		UserMenu
 	},
 	data() {
 		return {};
 	},
 	computed: {
 		isLoggedIn() {
-			return this.$store.getters.isLoggedIn;
+			return this.$store.getters["auth/isLoggedIn"];
 		},
 		user() {
-			return this.$store.getters.user;
+			return this.$store.getters["user/user"];
 		}
 	}
 };
