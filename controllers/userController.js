@@ -1,4 +1,4 @@
-const User = require("../models/userModel");
+const UserService = require("../services/userService");
 
 exports.exists = async (req, res) => {
 	const { username } = req.params;
@@ -9,20 +9,15 @@ exports.exists = async (req, res) => {
 	});
 
 	try {
-		const user = await User.findOne({
+		//TODO: get by userId (_id) instead
+		const user = await UserService.getUserByUsername({
 			username
 		});
-		if (user) {
-			res.status(200).json({
-				status: "success",
-				exists: true
-			});
-		} else {
-			res.status(200).json({
-				status: "success",
-				exists: false
-			});
-		}
+		
+		res.status(200).json({
+			status: "success",
+			exists: (user !== null)
+		});
 	} catch (e) {
 		res.status(500).json({
 			status: "fail"

@@ -1,5 +1,5 @@
-const bcrypt = require("bcryptjs")
-const User = require("../models/userModel");
+const bcrypt = require("bcryptjs");
+const UserService = require("../services/userService");
 
 exports.checkSession = async (req, res) => {
 	const { user } = req.session;
@@ -26,13 +26,21 @@ exports.signup = async (req, res) => {
 	const { username, password, email } = req.body;
 	try {
 		const hashedPassword = await bcrypt.hash(password, 12);
-		let newUser = await User.create({
+		let newUser = await UserService.create({
 			username,
 			password: hashedPassword,
 			email
 		});
+
 		req.session.user = newUser;
-		newUser = { username: newUser.username, id: newUser._id, email };
+		
+		// research: can't delete properties for some reason
+		newUser = { 
+			id: newUser.id,
+			username, email, 
+			profile: newUser.profile 
+		};
+		
 		res.status(201).json({
 			status: "success",
 			newUser
@@ -57,7 +65,8 @@ exports.login = async (req, res) => {
 	}
 
 	try {
-		const user = await User.findOne({ username });
+		const user = await UserService.getUserByUsername({ username });
+		
 		if (!user) {
 			return res.status(200).json({
 				status: 'fail',
@@ -73,7 +82,8 @@ exports.login = async (req, res) => {
 				user: { 
 					username: user.username,
 					id: user._id,
-					email: user.email
+					email: user.email,
+					profile: user.profile
 				}
 			});
 		} else {
