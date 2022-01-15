@@ -430,8 +430,6 @@ Quick Aside: Here I ran into a couple issues. This is what they were and how I s
 
 - We will be deploying the app the WRONG WAY, then steadily correcting things to illustrate why we're configuring it the way we are. It may be frustrating to follow point-to-point, but I agree with the presenter that this will show first-hand experience how things should be done with the reasoning included.
 
-- These notes will be ALOT more sparse here. If you have any questions email me wforbes87@gmail.com!
-
 #### Installing docker on Ubuntu (with Digital Ocean)
 
 - Set up digital ocean account
