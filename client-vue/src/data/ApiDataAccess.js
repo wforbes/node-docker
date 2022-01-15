@@ -17,16 +17,21 @@ export default class ApiDataAccess {
 			axios
 				.get(
 					this.requestUrl(endpoint) +
-						(!this.vue.isEmpty(options) ? `${options.id}` : "")
+						(!this.vue.isEmpty(options) ? `${options.id}` : ""),
+					{
+						validateStatus: function (status) {
+							return status < 500;
+						}
+					}
 				)
 				.catch((error) => {
-					resolve(error);
+					return resolve(error);
 				})
 				.then((response) => {
-					if (!this.vue.isEmpty(response.data.status)) {
+					if (!this.vue.isEmpty(response) && !this.vue.isEmpty(response.data)) {
 						return resolve(response.data);
 					}
-					return resolve(response.data);
+					return resolve(response);
 				});
 		});
 	}

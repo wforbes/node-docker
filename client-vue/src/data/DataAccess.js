@@ -1,9 +1,12 @@
 import ApiDataAccess from "./ApiDataAccess.js";
-export default class DataAccess {
+//import { errorInterceptor } from "@/data/ErrorInterceptor.js";
+class DataAccess {
 	dataContext;
+
 	constructor(vue) {
 		this.dataContext = new ApiDataAccess(vue);
 	}
+
 	userExists(username) {
 		return this.dataContext.userExists(username);
 	}
@@ -20,3 +23,5 @@ export default class DataAccess {
 		return this.dataContext.logout();
 	}
 }
+
+export default DataAccess;
