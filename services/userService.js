@@ -1,44 +1,64 @@
 const User = require("../models/userModel");
 const UserProfile = require("../models/userProfileModel");
 
-exports.getUserByUsername = ({ username }) => {
+const getUserByUsername = ({ username }) => {
 	return new Promise(async (resolve) => {
 		User.findOne({ username }).then((user) => {
 			if (user) {
-				//todo: create better solution than this hacky work around IIFE
-				user.profile = (async() => await UserProfile.findOne({ userId: user.userId }))();
+				UserProfile.findOne({ 
+					userId: user._id.toString()
+				}).then((profile) => {
+					// manually build user/profile obj
+					//	so that password may be deleted
+					//	before reaching client
+					return resolve({
+						id: user._id.toString(),
+						username: user.username,
+						password: user.password,
+						email: user.email,
+						profile: {
+							id: profile._id.toString(),
+							userId: profile.userId,
+							firstName: profile.firstName,
+							lastName: profile.lastName,
+							phone: profile.phone	
+						}
+					});
+				});
+			} else {
+				return resolve(user);
 			}
-			return resolve(user);
 		});
 	});
 }
 
-exports.create = (user) => {
+const create = (user) => {
 	return new Promise(async (resolve) => {
 		User.create(user).then(async (user) => {
-			//research: can't delete properties for some reason
-			delete user._id;
-			user = { 
-				id: user._id.toString(),
-				username: user.username,
-				email: user.email
-			};
 			UserProfile.create({ 
-				userId: user.id,
+				userId: user._id.toString(),
 				firstName: "",
 				lastName: "",
 				phone: ""
 			}).then((profile) => {
-				// research: can't delete properties for some reason
-				user.profile = {
-					id: profile._id.toString(),
-					userId: profile.userId,
-					firstName: profile.firstName,
-					lastName: profile.lastName,
-					phone: profile.phone
-				}
-				return resolve(user);
+				return resolve({
+					id: user._id.toString(),
+					username: user.username,
+					email: user.email,
+					profile: {
+						id: profile._id.toString(),
+						userId: profile.userId,
+						firstName: profile.firstName,
+						lastName: profile.lastName,
+						phone: profile.phone	
+					}
+				});
 			});
 		});
 	});
+}
+
+module.exports = {
+	create: create,
+	getUserByUsername: getUserByUsername
 }

@@ -13,14 +13,17 @@ exports.exists = async (req, res) => {
 		const user = await UserService.getUserByUsername({
 			username
 		});
-		
+
 		res.status(200).json({
 			status: "success",
 			exists: (user !== null)
 		});
+
 	} catch (e) {
+
 		res.status(500).json({
 			status: "fail"
 		});
+		
 	}
 }
