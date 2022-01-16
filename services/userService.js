@@ -4,6 +4,8 @@ const UserProfile = require("../models/userProfileModel");
 const getUserByUsername = ({ username }) => {
 	return new Promise(async (resolve) => {
 		User.findOne({ username }).then((user) => {
+			return resolve(user);
+			/*
 			if (user) {
 				UserProfile.findOne({ 
 					userId: user._id.toString()
@@ -27,12 +29,37 @@ const getUserByUsername = ({ username }) => {
 				});
 			} else {
 				return resolve(user);
-			}
+			}*/
 		});
 	});
 }
 
-const create = (user) => {
+const create = async (user) => {
+	const newUser = new User({
+		...user,
+		profile: {
+			firstName: "",
+			lastName: "",
+			middleInitial: ""
+		},
+		contactInfo: {
+			phone: [],
+			email: [],
+			address: {
+				lines: [],
+				city: "",
+				state: "",
+				zip: "",
+				country: ""
+			}
+		}
+	})
+	await newUser.save((err, _user) => {
+		if (err) return console.error(err);
+		console.log(_user);
+	});
+	return Promise.resolve(newUser);
+	/*
 	return new Promise(async (resolve) => {
 		User.create(user).then(async (user) => {
 			UserProfile.create({ 
@@ -56,6 +83,11 @@ const create = (user) => {
 			});
 		});
 	});
+	*/
+}
+
+const updateUserById = ({ id }) => {
+
 }
 
 module.exports = {
