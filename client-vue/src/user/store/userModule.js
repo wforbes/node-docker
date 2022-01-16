@@ -11,6 +11,18 @@ export default {
 		setUser({ commit }, { user }) {
 			//console.log(user);
 			commit("setUser", user);
+		},
+		updateMyUserField({ rootState, getters }, { field, value }) {
+			return rootState.da
+				.updateUserFieldById({
+					id: getters.user.id,
+					field: field,
+					value: value
+				})
+				.then((response) => {
+					console.log(response);
+					return Promise.resolve(response);
+				});
 		}
 	},
 	mutations: {
