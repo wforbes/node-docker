@@ -14,6 +14,9 @@ export const util = {
 		isEqual(a, b) {
 			return _.isEqual(a, b);
 		},
+		isObject(x) {
+			return typeof x === "object" && !Array.isArray(x) && x !== null;
+		},
 		cloneDeep(x) {
 			return _.cloneDeep(x);
 		},
@@ -21,7 +24,7 @@ export const util = {
 			return _.has(obj, key);
 		},
 		ucFirst(str) {
-			return typeof s === "string"
+			return typeof str === "string"
 				? str.charAt(0).toUpperCase() + str.slice(1)
 				: "";
 		},

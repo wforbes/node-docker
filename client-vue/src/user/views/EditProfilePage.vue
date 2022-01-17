@@ -5,140 +5,103 @@
 				<div v-if="isLoggedIn">
 					<v-card class="pa-5" min-height="420">
 						<v-row>
-							<v-col cols="3">
+							<v-col cols="5" sm="4" md="3">
 								<v-btn color="primary" @click="navigateTo('dashboard')">
 									<v-icon>mdi-arrow-left</v-icon>
 									Dashboard
 								</v-btn>
 							</v-col>
 							<v-col>
-								<span class="text-h3"> Edit Profile </span>
+								<span class="text-h4"> Edit Profile </span>
 							</v-col>
 						</v-row>
 						<v-row>
-							<v-col cols="12" sm="8" md="6">
-								<!--
-								<ToggleEditTextField 
+							<v-col
+								v-for="([key, val], i) of userFields"
+								:key="i"
+								cols="12"
+								sm="8"
+								md="6"
+							>
+								<ToggleEditTextField
 									:activeField="activeField"
-									:editObject="editUser"
-									:editField="username"
+									:field="key"
+									:currentValue="val"
+									:fieldLoading="fieldLoading.find((f) => f.name === key)"
 									@activateField="activateField"
 									@setActiveField="setActiveField"
 									@saveField="saveField"
 									@clearActiveField="clearActiveField"
 								/>
-								-->
-								<v-text-field
-									outlined
-									:readonly="!fieldActive('username')"
-									:class="fieldActive('username') ? 'field-active' : ''"
-									v-model="editUser.username"
-									label="Username"
-									@click="activateField('username')"
-									:placeholder="user.username"
-								>
-									<template v-slot:append>
-										<div
-											v-if="fieldActive('username')"
-											class="d-inline-flex justify-end"
-										>
-											<v-btn
-												icon
-												class="mt-2 d-inline-flex"
-												@click="saveField('username')"
-											>
-												<v-icon color="success">mdi-content-save</v-icon>
-											</v-btn>
-											<v-btn
-												icon
-												class="mt-2 d-inline-flex"
-												@click="clearActiveField()"
-											>
-												<v-icon color="error">mdi-cancel</v-icon>
-											</v-btn>
-										</div>
-										<div v-else-if="fieldLoading">
-											<v-progress-circular indeterminate></v-progress-circular>
-										</div>
-										<div v-else class="d-flex justify-end">
-											<v-btn
-												icon
-												class="mt-2"
-												@click="setActiveField('username')"
-											>
-												<v-icon>mdi-pencil</v-icon>
-											</v-btn>
-										</div>
-									</template>
-								</v-text-field>
-							</v-col>
-							<v-col cols="12" sm="8" md="6">
-								<v-text-field
-									:readonly="fieldActive('email')"
-									outlined
-									label="Email"
-									:placeholder="user.email"
-								>
-									<template v-slot:append>
-										<v-btn icon class="mt-2" @click="setActiveField('email')">
-											<v-icon>mdi-pencil</v-icon>
-										</v-btn>
-									</template>
-								</v-text-field>
 							</v-col>
 						</v-row>
-						<v-row v-if="user.profile">
-							<v-col>
-								<v-text-field
-									:readonly="fieldActive('firstName')"
-									outlined
-									label="First Name"
-									:placeholder="user.profile.firstName"
-								>
-									<template v-slot:append>
-										<v-btn
-											icon
-											class="mt-2"
-											@click="setActiveField('firstName')"
-										>
-											<v-icon>mdi-pencil</v-icon>
-										</v-btn>
-									</template>
-								</v-text-field>
+						<v-row>
+							<v-col cols="8" sm="5" md="5">
+								<ToggleEditTextField
+									:subObject="'profile'"
+									:activeField="activeField"
+									:field="'firstName'"
+									:label="'First Name'"
+									:currentValue="user.profile.firstName"
+									:fieldLoading="fieldLoading.find((f) => f.name === key)"
+									@activateField="activateField"
+									@setActiveField="setActiveField"
+									@saveField="saveField"
+									@clearActiveField="clearActiveField"
+								/>
 							</v-col>
-							<v-col>
-								<v-text-field
-									:readonly="fieldActive('lastName')"
-									outlined
-									label="Last Name"
-									:placeholder="user.profile.lastName"
-								>
-									<template v-slot:append>
-										<v-btn
-											icon
-											class="mt-2"
-											@click="setActiveField('lastName')"
-										>
-											<v-icon>mdi-pencil</v-icon>
-										</v-btn>
-									</template>
-								</v-text-field>
+							<v-col cols="4" sm="3" md="2">
+								<ToggleEditTextField
+									:subObject="'profile'"
+									:activeField="activeField"
+									:field="'middleInitial'"
+									:label="'M.I.'"
+									:currentValue="user.profile.middleInitial"
+									:fieldLoading="fieldLoading.find((f) => f.name === key)"
+									@activateField="activateField"
+									@setActiveField="setActiveField"
+									@saveField="saveField"
+									@clearActiveField="clearActiveField"
+								/>
 							</v-col>
-							<v-col>
-								<v-text-field
-									:readonly="fieldActive('phone')"
-									outlined
-									label="Phone Number"
-									:placeholder="user.profile.phone"
-								>
-									<template v-slot:append>
-										<v-btn icon class="mt-2" @click="setActiveField('phone')">
-											<v-icon>mdi-pencil</v-icon>
-										</v-btn>
-									</template>
-								</v-text-field>
+							<v-col cols="12" sm="8" md="5">
+								<ToggleEditTextField
+									:subObject="'profile'"
+									:activeField="activeField"
+									:field="'lastName'"
+									:label="'Last Name'"
+									:currentValue="user.profile.lastName"
+									:fieldLoading="fieldLoading.find((f) => f.name === key)"
+									@activateField="activateField"
+									@setActiveField="setActiveField"
+									@saveField="saveField"
+									@clearActiveField="clearActiveField"
+								/>
 							</v-col>
 						</v-row>
+						<!--
+						<v-row>
+							<v-col
+								v-for="([key, val], i) of contactFields"
+								:key="i"
+								cols="12"
+								sm="8"
+								md="6"
+							>
+								<EditList
+									v-if="!Array.isArray(val)"
+									:subObject="'contact'"
+									:activeField="activeField"
+									:field="key"
+									:currentValue="val"
+									@activateField="activateField"
+									@setActiveField="setActiveField"
+									@saveField="saveField"
+									@clearActiveField="clearActiveField"
+								/>
+							</v-col>
+						</v-row>
+						-->
 					</v-card>
 				</div>
 				<div v-else>
@@ -150,20 +113,28 @@
 </template>
 <script>
 import NotLoggedInView from "@/app/views/NotLoggedInView.vue";
+import ToggleEditTextField from "@/app/components/ToggleEditTextField.vue";
 export default {
 	name: "EditProfilePage",
 	components: {
-		NotLoggedInView
+		NotLoggedInView,
+		ToggleEditTextField
 	},
 	data() {
 		return {
 			activeField: "",
 			editUser: {},
-			fieldLoading: false
+			fieldLoading: []
 		};
 	},
 	created() {
-		this.editUser = this.cloneDeep(this.user);
+		this.editUser = this.setup(this.user);
+	},
+	watch: {
+		user(newV, oldV) {
+			if (!this.isEqual(newV, oldV)) this.setup(newV);
+			console.log(Array.isArray(this.contactFields.phone));
+		}
 	},
 	computed: {
 		isLoggedIn() {
@@ -171,9 +142,28 @@ export default {
 		},
 		user() {
 			return this.$store.getters["user/user"];
+		},
+		userFields() {
+			return Object.entries(this.user).filter(
+				([key, val]) => key !== "id" && !this.isObject(val)
+			);
+		},
+		profileFields() {
+			return Object.entries(this.user.profile).filter(
+				([key, val]) => key !== "_id" && !this.isObject(val)
+			);
+		},
+		contactFields() {
+			return Object.entries(this.user.contactInfo).filter(
+				([key, val]) => key !== "_id" && !this.isObject(val)
+			);
 		}
 	},
 	methods: {
+		setup(obj) {
+			this.editUser = this.cloneDeep(obj);
+			this.fieldLoading = [];
+		},
 		fieldActive(field) {
 			return field === this.activeField;
 		},
@@ -188,16 +178,16 @@ export default {
 		clearActiveField() {
 			this.activeField = "";
 		},
-		saveField(field) {
-			this.fieldLoading = true;
+		saveField(field, value) {
+			this.fieldLoading[Array.isArray(field) ? field[1] : field] = true;
 			this.$store
 				.dispatch({
 					type: "user/updateMyUserField",
 					field,
-					value: this.editUser[field]
+					value
 				})
 				.then((success) => {
-					this.fieldLoading = false;
+					this.fieldLoading[Array.isArray(field) ? field[1] : field] = false;
 					if (success) {
 						this.clearActiveField();
 					}

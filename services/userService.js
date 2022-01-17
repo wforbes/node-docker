@@ -5,6 +5,9 @@ const UserProfile = require("../models/userProfileModel");
 const getUserByUsername = ({ username }) => {
 	return new Promise(async (resolve) => {
 		User.findOne({ username }).then((user) => {
+			if (!user)
+				return resolve(user);
+
 			return resolve({
 				id: user._id.toString(),
 				username: user.username,
@@ -102,11 +105,30 @@ const create = async (user) => {
 }
 
 const updateUserFieldById = async ({ id, field, newValue }) => {
-	const updateObj = {};
-	updateObj[field] = newValue;
-	let updated = await User.findByIdAndUpdate({ '_id': new ObjectId(id) }, updateObj, {
-		new: true
-	});
+	let updateObj = {};
+	let updated;
+	if (Array.isArray(field)) {
+		// field as array refers to a nested object's field (profile or contact)
+		updated = await User.findOne({ '_id': new ObjectId(id) });
+
+		if (field.length === 3) {
+			updated[field[0]][field[1]][field[2]] = newValue;
+		} else {
+			updated[field[0]][field[1]] = newValue;
+		}
+		
+		await updated.save((err, _user) => {
+			if (err) return console.error(err);
+			console.log(_user);
+		});
+	} else {
+		updateObj[field] = newValue;
+		updated = await User.findByIdAndUpdate({ '_id': new ObjectId(id) }, updateObj, {
+			new: true
+		});
+	}
+	
+	
 	// convert _id to id, remove password
 	updated = {
 		id: updated._id.toString(),

@@ -11,8 +11,7 @@ const userProfileSchema = new mongoose.Schema({
 		type: String
 	},
 	birthday: {
-		type: Date,
-		default: undefined
+		type: Date
 	}
 });
 
