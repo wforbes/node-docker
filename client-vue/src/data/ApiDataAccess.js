@@ -57,6 +57,23 @@ export default class ApiDataAccess {
 		});
 	}
 
+	put(endpoint, id, body = {}) {
+		return new Promise((resolve) => {
+			axios
+				.put(this.requestUrl(endpoint) + id + "/", body)
+				.catch((error) => {
+					console.error(error);
+					resolve(error);
+				})
+				.then((response) => {
+					if (!this.vue.isEmpty(response) && !this.vue.isEmpty(response.data)) {
+						return resolve(response.data);
+					}
+					return resolve(response);
+				});
+		});
+	}
+
 	userExists(username) {
 		return this.get(`users/userExists/${username}`);
 	}
@@ -71,5 +88,11 @@ export default class ApiDataAccess {
 	}
 	logout() {
 		return this.post("users/logout");
+	}
+	updateUserFieldById(data) {
+		return this.put("users/", data.id, {
+			field: data.field,
+			value: data.value
+		});
 	}
 }

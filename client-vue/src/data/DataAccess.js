@@ -22,6 +22,9 @@ class DataAccess {
 	logout() {
 		return this.dataContext.logout();
 	}
+	updateUserFieldById(data) {
+		return this.dataContext.updateUserFieldById(data);
+	}
 }
 
 export default DataAccess;

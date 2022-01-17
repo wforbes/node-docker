@@ -57,6 +57,9 @@
 												<v-icon color="error">mdi-cancel</v-icon>
 											</v-btn>
 										</div>
+										<div v-else-if="fieldLoading">
+											<v-progress-circular indeterminate></v-progress-circular>
+										</div>
 										<div v-else class="d-flex justify-end">
 											<v-btn
 												icon
@@ -155,7 +158,8 @@ export default {
 	data() {
 		return {
 			activeField: "",
-			editUser: {}
+			editUser: {},
+			fieldLoading: false
 		};
 	},
 	created() {
@@ -185,14 +189,18 @@ export default {
 			this.activeField = "";
 		},
 		saveField(field) {
+			this.fieldLoading = true;
 			this.$store
 				.dispatch({
 					type: "user/updateMyUserField",
 					field,
 					value: this.editUser[field]
 				})
-				.then((response) => {
-					console.log(response);
+				.then((success) => {
+					this.fieldLoading = false;
+					if (success) {
+						this.clearActiveField();
+					}
 				});
 		},
 		navigateTo(routeName) {
