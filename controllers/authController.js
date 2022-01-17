@@ -30,7 +30,7 @@ exports.signup = async (req, res) => {
 			password: hashedPassword,
 			email
 		});
-
+		delete newUser.password;
 		req.session.user = newUser;
 		
 		res.status(201).json({
