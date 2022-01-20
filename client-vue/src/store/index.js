@@ -4,6 +4,7 @@ import Vuex from "vuex";
 import DataAccess from "@/data/DataAccess.js";
 import Auth from "@/auth/store/authModule.js";
 import User from "@/user/store/userModule.js";
+import Lvlz from "@/lvlz/store/lvlzModule.js";
 
 Vue.use(Vuex);
 
@@ -11,7 +12,8 @@ export default new Vuex.Store({
 	namespaced: true,
 	modules: {
 		auth: Auth,
-		user: User
+		user: User,
+		lvlz: Lvlz
 	},
 	state: {
 		vue: undefined,
