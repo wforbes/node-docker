@@ -43,6 +43,12 @@ const routes = [
 			import(
 				/* webpackChunkName: "dashboard" */ "@/user/views/EditProfilePage.vue"
 			)
+	},
+	{
+		path: "/lvlz",
+		name: "Levelz",
+		component: () =>
+			import(/* webpackChunkName: "lvlz" */ "@/lvlz/views/LevelzPage.vue")
 	}
 ];
 
