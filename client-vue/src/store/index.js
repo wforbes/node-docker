@@ -52,7 +52,7 @@ export default new Vuex.Store({
 				window.location.host === getters.localhostAddr ||
 				window.location.host.href === getters.localhostAddr
 					? getters.localApiHost
-					: window.location.host || window.location.host.href;
+					: "";
 			commit("setApiHost", apiHost);
 		},
 		setDataAccess({ commit, getters }) {
