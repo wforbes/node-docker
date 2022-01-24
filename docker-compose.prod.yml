@@ -8,8 +8,6 @@ services:
   client-vue:
     build: ./client-vue
     image: wforbes87/client-vue
-    ports:
-      - "8080:80"
   node-app:
     deploy:
       replicas: 4
