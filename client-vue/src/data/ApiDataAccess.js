@@ -9,7 +9,7 @@ export default class ApiDataAccess {
 	}
 
 	requestUrl(endpoint) {
-		return `${this.vue.$store.getters.localApiHost}/api/v1/${endpoint}`;
+		return `${this.vue.$store.getters.apiHost}/api/v1/${endpoint}`;
 	}
 
 	get(endpoint, options = {}) {

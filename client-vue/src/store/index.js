@@ -19,16 +19,16 @@ export default new Vuex.Store({
 		vue: undefined,
 		da: {},
 		setupDone: false,
-		host: "",
-		localhostAddr: "http://localhost:8080",
-		localApiHost: "http://localhost", //dev env api host
+		apiHost: "",
+		localhostAddr: "localhost:8080",
+		localApiHost: "http://localhost:3000", //dev env api host
 		prodHostAddr: ""
 	},
 	getters: {
 		vue: (state) => state.vue,
 		da: (state) => state.da,
 		setupDone: (state) => state.setupDone,
-		host: (state) => state.host,
+		apiHost: (state) => state.apiHost,
 		localhostAddr: (state) => state.localhostAddr,
 		localApiHost: (state) => state.localApiHost,
 		prodHostAddr: (state) => state.prodHostAddr
@@ -39,7 +39,7 @@ export default new Vuex.Store({
 				type: "setVue",
 				vue
 			});
-			dispatch("setHost");
+			dispatch("setApiHost");
 			dispatch("setDataAccess");
 			await dispatch("auth/initSession");
 			commit("setSetupDone", true);
@@ -47,14 +47,13 @@ export default new Vuex.Store({
 		setVue({ commit }, { vue }) {
 			commit("setVue", vue);
 		},
-		setHost({ commit, getters }) {
-			commit(
-				"setHost",
+		setApiHost({ commit, getters }) {
+			const apiHost =
 				window.location.host === getters.localhostAddr ||
-					window.location.host.href === getters.localhostAddr
+				window.location.host.href === getters.localhostAddr
 					? getters.localApiHost
-					: getters.prodHostAddr
-			);
+					: window.location.host || window.location.host.href;
+			commit("setApiHost", apiHost);
 		},
 		setDataAccess({ commit, getters }) {
 			commit("setDataAccess", new DataAccess(getters.vue));
@@ -64,8 +63,8 @@ export default new Vuex.Store({
 		setVue(state, vue) {
 			state.vue = vue;
 		},
-		setHost(state, host) {
-			state.host = host;
+		setApiHost(state, apiHost) {
+			state.apiHost = apiHost;
 		},
 		setDataAccess(state, da) {
 			state.da = da;
