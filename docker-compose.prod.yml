@@ -4,7 +4,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx/prod_default.conf/:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/default_prod.conf/:/etc/nginx/conf.d/default.conf:ro
   vue-app:
     build: ./client-vue
     image: wforbes87/client-vue
