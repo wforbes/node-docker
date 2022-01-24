@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const UserService = require("../services/userService");
 
 exports.checkSession = async (req, res) => {
-
+	console.log("checkSession hit");
 	const { user } = req.session;
 
 	if (!user) {
@@ -22,6 +22,7 @@ exports.checkSession = async (req, res) => {
 };
 
 exports.signup = async (req, res) => {
+	console.log("signup hit");
 	const { username, password, email } = req.body;
 	try {
 		const hashedPassword = await bcrypt.hash(password, 12);
