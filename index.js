@@ -39,7 +39,7 @@ const connectWithRetry = () => {
 connectWithRetry();
 
 app.enable("trust proxy");
-const whitelist = ["http://localhost", "http://localhost:8080", "http://164.90.153.250"]
+const whitelist = ["http://localhost", "http://localhost:8080", "http://164.90.153.250", "http://node-docker.com"]
 app.use(
 	cors({ 
 		origin: (origin, callback) => {

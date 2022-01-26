@@ -1,5 +1,7 @@
 const bcrypt = require("bcryptjs");
 const UserService = require("../services/userService");
+var nodemailer = require('nodemailer');
+//const EmailService = require("../services/emailService");
 
 exports.checkSession = async (req, res) => {
 	console.log("checkSession hit");
@@ -34,11 +36,31 @@ exports.signup = async (req, res) => {
 		delete newUser.password;
 		req.session.user = newUser;
 		
+		//let trans = EmailService.transporter;
+		const transporter = nodemailer.createTransport({
+			sendmail: true,
+			newline: 'unix',
+			path: '/usr/sbin/sendmail'
+		});
+		transporter.sendMail({
+			to: email,
+			from: '"NoReply" <noreply@node-docker.com>',
+			subject: "Confirm your new Node-Docker account",
+			text: "Testing",
+			html: "<h1>Testing!</h1>"
+		}, function (err, info) {
+			if (err) 
+				console.log(err)
+			else
+				console.log(info)
+		})
+
 		res.status(201).json({
 			status: "success",
 			newUser
 		});
 	} catch (e) {
+		console.log(e);
 		res.status(400).json({
 			status: "fail"
 		});
