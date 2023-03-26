@@ -79,6 +79,11 @@
 								/>
 							</v-col>
 						</v-row>
+						<v-row>
+							<v-col cols="6">
+								<!--<EditList :items="user.contactInfo.phone" />-->
+							</v-col>
+						</v-row>
 						<!--
 						<v-row>
 							<v-col
@@ -133,7 +138,6 @@ export default {
 	watch: {
 		user(newV, oldV) {
 			if (!this.isEqual(newV, oldV)) this.setup(newV);
-			console.log(Array.isArray(this.contactFields.phone));
 		}
 	},
 	computed: {

@@ -1,6 +1,7 @@
 <template>
 	<v-text-field
 		outlined
+		dense
 		:readonly="!fieldActive(field)"
 		:class="fieldActive(field) ? 'field-active' : ''"
 		v-model="editValue"

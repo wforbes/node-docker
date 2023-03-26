@@ -25,7 +25,6 @@ const addressSchema = mongoose.Schema({
 
 const userContactInfoSchema = new mongoose.Schema({
 	phone: [Number],
-	email: [String],
 	address: addressSchema
 });
 
