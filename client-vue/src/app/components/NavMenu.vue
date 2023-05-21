@@ -60,6 +60,16 @@ export default {
 					tooltip: "View info about the app",
 					selected: "",
 					visible: true
+				},
+				{
+					id: 1,
+					route: { name: "lvlz" },
+					name: "Levelz",
+					path: "/lvlz",
+					icon: "mdi-information",
+					tooltip: "Levelz.app prototype",
+					selected: "",
+					visible: true
 				}
 			]
 		};
